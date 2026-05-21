@@ -1,149 +1,139 @@
 @echo off
-chcp 65001 >nul
-title Portal de Pendências Docentes - PUCPR
+title Portal de Pendencias Docentes - PUCPR
 
 echo.
-echo ╔══════════════════════════════════════════════════════════╗
-echo ║     PORTAL DE ANÁLISE DE PENDÊNCIAS DOCENTES - PUCPR    ║
-echo ║                     Grupo Marista                        ║
-echo ╚══════════════════════════════════════════════════════════╝
+echo =====================================================
+echo   PORTAL DE ANALISE DE PENDENCIAS DOCENTES - PUCPR
+echo   Grupo Marista - GPCA
+echo =====================================================
 echo.
 
 :: ====== DETECTAR NODE.JS ======
-set NODE_PATH=
-set NPM_PATH=
+set NODE_EXE=node
+set NPM_EXE=npm
 
-:: Tentar node no PATH
 node --version >nul 2>&1
-if %errorlevel% == 0 (
-    set NODE_PATH=node
-    set NPM_PATH=npm
-    goto :node_found
+if %errorlevel% == 0 goto :node_ok
+
+:: Tentar node portable do usuario
+if exist "%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe" (
+    set NODE_EXE=%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe
+    set NPM_EXE=%USERPROFILE%\node-portable\node-v20.19.2-win-x64\npm.cmd
+    set PATH=%USERPROFILE%\node-portable\node-v20.19.2-win-x64;%PATH%
+    goto :node_ok
 )
 
-:: Tentar node portable na pasta do usuário
-if exist "%USERPROFILE%\node-portable" (
-    for /d %%d in ("%USERPROFILE%\node-portable\node-v*") do (
-        if exist "%%d\node.exe" (
-            set NODE_PATH=%%d\node.exe
-            set NPM_PATH=%%d\npm.cmd
-            set PATH=%%d;%PATH%
-            goto :node_found
-        )
-    )
-)
-
-:: Tentar instalação padrão do Windows
+:: Tentar instalacao padrao
 if exist "C:\Program Files\nodejs\node.exe" (
-    set NODE_PATH=C:\Program Files\nodejs\node.exe
-    set NPM_PATH=C:\Program Files\nodejs\npm.cmd
+    set NODE_EXE=C:\Program Files\nodejs\node.exe
+    set NPM_EXE=C:\Program Files\nodejs\npm.cmd
     set PATH=C:\Program Files\nodejs;%PATH%
-    goto :node_found
+    goto :node_ok
 )
 
-:: Tentar instalar com winget
-echo [INFO] Node.js não encontrado. Tentando instalar...
-winget install OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements
-if %errorlevel% == 0 (
-    echo [OK] Node.js instalado com sucesso!
-    set PATH=C:\Program Files\nodejs;%PATH%
-    set NODE_PATH=node
-    set NPM_PATH=npm
-    goto :node_found
+:: Tentar instalacao via AppData (nvm, fnm, etc.)
+if exist "%APPDATA%\npm\node.exe" (
+    set NODE_EXE=%APPDATA%\npm\node.exe
+    set NPM_EXE=%APPDATA%\npm\npm.cmd
+    set PATH=%APPDATA%\npm;%PATH%
+    goto :node_ok
 )
 
-echo [ERRO] Não foi possível instalar o Node.js automaticamente.
-echo        Acesse https://nodejs.org e instale manualmente.
+echo.
+echo [ERRO] Node.js nao encontrado.
+echo.
+echo Opcoes:
+echo   1) Instale o Node.js em https://nodejs.org
+echo   2) Ou execute no terminal: winget install OpenJS.NodeJS.LTS
+echo.
 pause
 exit /b 1
 
-:node_found
-echo [OK] Node.js detectado.
-%NODE_PATH% --version 2>&1 | findstr "v"
+:node_ok
+echo [OK] Node.js detectado:
+"%NODE_EXE%" --version
+echo.
 
-:: ====== DIRETÓRIO BASE ======
+:: ====== DIRETORIO BASE ======
 set BASE_DIR=%~dp0..
 cd /d "%BASE_DIR%"
-echo [INFO] Diretório base: %BASE_DIR%
 
-:: ====== CRIAR ESTRUTURA ======
-echo.
-echo [INFO] Verificando estrutura de pastas...
+:: ====== ESTRUTURA DE PASTAS ======
 if not exist "data\logs" mkdir "data\logs"
 if not exist "data\relatorios" mkdir "data\relatorios"
 if not exist "data\cache" mkdir "data\cache"
 if not exist "temp" mkdir "temp"
 echo [OK] Estrutura de pastas verificada.
 
-:: ====== COPIAR EXCEL ======
+:: ====== COPIAR EXCEL SE NECESSARIO ======
 if exist "Atv_Pendentes_Abril.xlsx" (
     if not exist "data\Atv_Pendentes_Abril.xlsx" (
         copy "Atv_Pendentes_Abril.xlsx" "data\" >nul
-        echo [OK] Planilha copiada para data/
+        echo [OK] Planilha copiada para data\
     )
 )
 
-:: ====== DEPENDÊNCIAS BACKEND ======
+:: ====== DEPENDENCIAS BACKEND ======
 echo.
-echo [INFO] Verificando dependências do backend...
+echo [INFO] Verificando backend...
 cd /d "%BASE_DIR%\backend"
 if not exist "node_modules" (
-    echo [INFO] Instalando dependências do backend...
-    call %NPM_PATH% install
+    echo [INFO] Instalando dependencias do backend...
+    call "%NPM_EXE%" install
     if %errorlevel% neq 0 (
-        echo [ERRO] Falha ao instalar dependências do backend.
+        echo [ERRO] Falha nas dependencias do backend.
         pause
         exit /b 1
     )
-    echo [OK] Dependências do backend instaladas.
+    echo [OK] Backend: dependencias instaladas.
 ) else (
-    echo [OK] Dependências do backend já instaladas.
+    echo [OK] Backend: dependencias ja instaladas.
 )
 
-:: ====== DEPENDÊNCIAS FRONTEND ======
+:: ====== DEPENDENCIAS FRONTEND ======
 echo.
-echo [INFO] Verificando dependências do frontend...
+echo [INFO] Verificando frontend...
 cd /d "%BASE_DIR%\frontend"
 if not exist "node_modules" (
-    echo [INFO] Instalando dependências do frontend...
-    call %NPM_PATH% install
+    echo [INFO] Instalando dependencias do frontend...
+    call "%NPM_EXE%" install
     if %errorlevel% neq 0 (
-        echo [ERRO] Falha ao instalar dependências do frontend.
+        echo [ERRO] Falha nas dependencias do frontend.
         pause
         exit /b 1
     )
-    echo [OK] Dependências do frontend instaladas.
+    echo [OK] Frontend: dependencias instaladas.
 ) else (
-    echo [OK] Dependências do frontend já instaladas.
+    echo [OK] Frontend: dependencias ja instaladas.
 )
 
-:: ====== .ENV DO BACKEND ======
+:: ====== ARQUIVO .ENV ======
 cd /d "%BASE_DIR%\backend"
 if not exist ".env" (
-    echo PORT=3001 > .env
-    echo NODE_ENV=development >> .env
-    echo DATA_DIR=../data >> .env
-    echo ASSETS_DIR=../assets >> .env
-    echo TEMP_DIR=../temp >> .env
+    (
+        echo PORT=3001
+        echo NODE_ENV=development
+        echo DATA_DIR=../data
+        echo ASSETS_DIR=../assets
+        echo TEMP_DIR=../temp
+    ) > .env
     echo [OK] Arquivo .env criado.
 )
 
 :: ====== INICIAR BACKEND ======
 echo.
-echo [INFO] Iniciando backend na porta 3001...
+echo [INFO] Iniciando backend (porta 3001)...
 cd /d "%BASE_DIR%\backend"
-start "Backend - Portal PUCPR" cmd /k "title Backend - Portal PUCPR && call %NPM_PATH% run dev"
+start "Backend PUCPR :3001" cmd /k ""%NODE_EXE%" node_modules\.bin\ts-node src\index.ts"
 
-:: Aguardar backend inicializar
 echo [INFO] Aguardando backend inicializar...
-timeout /t 6 /nobreak >nul
+timeout /t 7 /nobreak >nul
 
 :: ====== INICIAR FRONTEND ======
-echo [INFO] Iniciando frontend na porta 3000...
+echo [INFO] Iniciando frontend (porta 3000)...
 cd /d "%BASE_DIR%\frontend"
-start "Frontend - Portal PUCPR" cmd /k "title Frontend - Portal PUCPR && call %NPM_PATH% run dev"
+start "Frontend PUCPR :3000" cmd /k ""%NODE_EXE%" node_modules\.bin\vite --port 3000"
 
-:: Aguardar frontend inicializar
 echo [INFO] Aguardando frontend inicializar...
 timeout /t 8 /nobreak >nul
 
@@ -152,13 +142,13 @@ echo [INFO] Abrindo navegador...
 start "" "http://localhost:3000"
 
 echo.
-echo ╔══════════════════════════════════════════════════════════╗
-echo ║  ✓ Portal iniciado com sucesso!                         ║
-echo ║                                                          ║
-echo ║  Frontend: http://localhost:3000                         ║
-echo ║  Backend:  http://localhost:3001/api/health              ║
-echo ║                                                          ║
-echo ║  Para encerrar: feche as janelas do terminal             ║
-echo ╚══════════════════════════════════════════════════════════╝
+echo =====================================================
+echo   [OK] Portal iniciado com sucesso!
+echo.
+echo   Frontend : http://localhost:3000
+echo   Backend  : http://localhost:3001/api/health
+echo.
+echo   Para encerrar: feche as janelas do terminal.
+echo =====================================================
 echo.
 pause
