@@ -239,7 +239,7 @@ export class PDFGenerationService {
         const stat = fs.statSync(caminho);
         return { nomeArquivo: f, caminho, tamanhoBytes: stat.size, geradoEm: stat.mtime.toISOString() };
       })
-      .sort((a, b) => b.geradoEm.localeCompare(a.geradoEm));
+      .sort((a, b) => a.nomeArquivo.localeCompare(b.nomeArquivo));
   }
 
   excluirPDF(nomeArquivo: string): void {
