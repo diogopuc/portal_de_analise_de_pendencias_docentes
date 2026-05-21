@@ -133,22 +133,32 @@ timeout /t 8 /nobreak >nul
 
 :: ====== ABRIR NAVEGADOR ======
 echo [INFO] Abrindo navegador...
-start "" http://localhost:3000
+start "" "http://localhost:3000"
 
-:: ====== PAINEL DE CONTROLE ======
+:: ====== MENU DE CONTROLE ======
+:menu
 echo.
 echo =====================================================
-echo   [OK] SISTEMA INICIADO COM SUCESSO!
+echo   [OK] SISTEMA RODANDO
 echo.
 echo   Frontend : http://localhost:3000
 echo   Backend  : http://localhost:3001/api/health
 echo.
-echo   Pressione ENTER para ENCERRAR tudo.
+echo   1 - Abrir navegador
+echo   2 - Encerrar tudo e fechar
 echo =====================================================
 echo.
-set /p "dummy=> "
+set /p "op=> Escolha (1 ou 2): "
+
+if "!op!"=="1" (
+    start "" "http://localhost:3000"
+    goto :menu
+)
+if "!op!"=="2" goto :shutdown
+goto :menu
 
 :: ====== ENCERRAR TUDO ======
+:shutdown
 echo.
 echo [INFO] Encerrando servicos...
 
