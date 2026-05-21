@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
 } from 'recharts';
-import { Users, AlertTriangle, Clock, CheckCircle, RefreshCw, Calendar } from 'lucide-react';
+import { Users, AlertTriangle, Clock, RefreshCw } from 'lucide-react';
 import { dashboardAPI } from '../services/api';
 import { StatCard, Card } from '../components/ui/Card';
 import { SkeletonCard } from '../components/ui/Skeleton';
@@ -77,7 +77,6 @@ export function Painel() {
         <StatCard titulo="Pendência de Agenda" valor={data.totalPendenciaAgenda} subtitulo="aguardando regularização" icon={<AlertTriangle size={20} />} cor="#E5000C" />
         <StatCard titulo="Pendência de TACH" valor={data.totalPendenciaTach} subtitulo="status em aberto" icon={<Clock size={20} />} cor="#FAAD14" />
         <StatCard titulo="Pendência Simultânea" valor={data.totalSimultaneo} subtitulo="agenda + TACH" icon={<AlertTriangle size={20} />} cor="#8C0E28" destaque />
-        <StatCard titulo="Sem Pendências" valor={data.semPendencia} subtitulo="em conformidade" icon={<CheckCircle size={20} />} cor="#4BB218" />
       </div>
 
       {/* Gráficos linha 1 */}
