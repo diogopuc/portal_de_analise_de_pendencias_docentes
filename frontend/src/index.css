@@ -1,0 +1,112 @@
+@import "tailwindcss";
+@theme {
+  --color-primary: #8A0538;
+  --color-primary-light: #B20235;
+  --color-primary-lightest: #E5C3D0;
+  --color-primary-dark: #570013;
+  --color-primary-darkest: #300000;
+  --color-dark-01: #1E1E1E;
+  --color-dark-02: #404040;
+  --color-dark-03: #787878;
+  --color-light-01: #FAFAFA;
+  --color-light-02: #F0F2F2;
+  --color-light-03: #E4E4E4;
+  --color-success: #4BB218;
+  --color-success-light: #EAFFD9;
+  --color-alert: #FFD600;
+  --color-warning: #E5000C;
+  --color-warning-light: #FFE0E0;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-source: 'Source Sans 3', sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-source);
+  background-color: #F0F2F2;
+  color: #1E1E1E;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F0F2F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #8A0538;
+  border-radius: 3px;
+}
+
+.sidebar-transition {
+  transition: width 0.3s ease, transform 0.3s ease;
+}
+
+.card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background-color: #8A0538;
+  color: white;
+  padding: 0 24px;
+  height: 48px;
+  border-radius: 8px;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover { background-color: #570013; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background-color: white;
+  color: #8A0538;
+  padding: 0 24px;
+  height: 48px;
+  border-radius: 8px;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid #8A0538;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background-color: #E5C3D0; }
+
+.badge-pendencia { background: #FFE0E0; color: #E5000C; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+.badge-ok { background: #EAFFD9; color: #4BB218; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+.badge-simultanea { background: #E5C3D0; color: #8A0538; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fadeIn { animation: fadeIn 0.3s ease; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
