@@ -1,4 +1,6 @@
 @echo off
+setlocal enabledelayedexpansion
+
 title Portal de Pendencias Docentes - PUCPR
 
 echo.
@@ -8,137 +10,133 @@ echo   Grupo Marista - GPCA
 echo =====================================================
 echo.
 
+:: BASE = pasta onde este .bat esta (sem trailing backslash)
+set "BASE=%~dp0"
+if "!BASE:~-1!"=="\" set "BASE=!BASE:~0,-1!"
+
+echo [INFO] Pasta do projeto: !BASE!
+echo.
+
 :: ====== DETECTAR NODE.JS ======
-set NODE_EXE=node
-set NPM_EXE=npm
+echo [INFO] Verificando Node.js...
 
 node --version >nul 2>&1
-if %errorlevel% == 0 goto :node_ok
+if not errorlevel 1 (
+    echo [OK] Node.js encontrado no PATH.
+    goto :node_ok
+)
 
-:: Tentar node portable do usuario
+:: Node portable (instalado nesta sessao)
 if exist "%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe" (
-    set NODE_EXE=%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe
-    set NPM_EXE=%USERPROFILE%\node-portable\node-v20.19.2-win-x64\npm.cmd
-    set PATH=%USERPROFILE%\node-portable\node-v20.19.2-win-x64;%PATH%
+    set "PATH=%USERPROFILE%\node-portable\node-v20.19.2-win-x64;!PATH!"
+    echo [OK] Node.js portable configurado.
     goto :node_ok
 )
 
-:: Tentar instalacao padrao
+:: Instalacao padrao do Windows
 if exist "C:\Program Files\nodejs\node.exe" (
-    set NODE_EXE=C:\Program Files\nodejs\node.exe
-    set NPM_EXE=C:\Program Files\nodejs\npm.cmd
-    set PATH=C:\Program Files\nodejs;%PATH%
+    set "PATH=C:\Program Files\nodejs;!PATH!"
+    echo [OK] Node.js encontrado em Program Files.
     goto :node_ok
 )
 
-:: Tentar instalacao via AppData (nvm, fnm, etc.)
-if exist "%APPDATA%\npm\node.exe" (
-    set NODE_EXE=%APPDATA%\npm\node.exe
-    set NPM_EXE=%APPDATA%\npm\npm.cmd
-    set PATH=%APPDATA%\npm;%PATH%
+:: Instalacao via nvm/fnm/chocolatey
+if exist "%APPDATA%\nvm\current\node.exe" (
+    set "PATH=%APPDATA%\nvm\current;!PATH!"
+    echo [OK] Node.js encontrado via nvm.
     goto :node_ok
 )
 
-echo.
 echo [ERRO] Node.js nao encontrado.
 echo.
-echo Opcoes:
-echo   1) Instale o Node.js em https://nodejs.org
-echo   2) Ou execute no terminal: winget install OpenJS.NodeJS.LTS
+echo Para instalar acesse: https://nodejs.org/pt/download
 echo.
 pause
 exit /b 1
 
 :node_ok
-echo [OK] Node.js detectado:
-"%NODE_EXE%" --version
+node --version
+npm --version
 echo.
 
-:: ====== DIRETORIO BASE ======
-set BASE_DIR=%~dp0
-cd /d "%BASE_DIR%"
-
 :: ====== ESTRUTURA DE PASTAS ======
-if not exist "data\logs" mkdir "data\logs"
-if not exist "data\relatorios" mkdir "data\relatorios"
-if not exist "data\cache" mkdir "data\cache"
-if not exist "temp" mkdir "temp"
-echo [OK] Estrutura de pastas verificada.
+if not exist "!BASE!\data\logs"       mkdir "!BASE!\data\logs"
+if not exist "!BASE!\data\relatorios" mkdir "!BASE!\data\relatorios"
+if not exist "!BASE!\data\cache"      mkdir "!BASE!\data\cache"
+if not exist "!BASE!\temp"            mkdir "!BASE!\temp"
+echo [OK] Estrutura de pastas OK.
 
-:: ====== COPIAR EXCEL SE NECESSARIO ======
-if exist "Atv_Pendentes_Abril.xlsx" (
-    if not exist "data\Atv_Pendentes_Abril.xlsx" (
-        copy "Atv_Pendentes_Abril.xlsx" "data\" >nul
+:: ====== COPIAR EXCEL ======
+if exist "!BASE!\Atv_Pendentes_Abril.xlsx" (
+    if not exist "!BASE!\data\Atv_Pendentes_Abril.xlsx" (
+        copy "!BASE!\Atv_Pendentes_Abril.xlsx" "!BASE!\data\" >nul
         echo [OK] Planilha copiada para data\
     )
 )
 
 :: ====== DEPENDENCIAS BACKEND ======
 echo.
-echo [INFO] Verificando backend...
-cd /d "%BASE_DIR%\backend"
-if not exist "node_modules" (
-    echo [INFO] Instalando dependencias do backend...
-    call "%NPM_EXE%" install
-    if %errorlevel% neq 0 (
-        echo [ERRO] Falha nas dependencias do backend.
+echo [INFO] Verificando dependencias do backend...
+if not exist "!BASE!\backend\node_modules" (
+    echo [INFO] Instalando... aguarde.
+    cd /d "!BASE!\backend"
+    call npm install
+    if errorlevel 1 (
+        echo [ERRO] Falha ao instalar dependencias do backend.
         pause
         exit /b 1
     )
-    echo [OK] Backend: dependencias instaladas.
+    echo [OK] Dependencias do backend instaladas.
 ) else (
     echo [OK] Backend: dependencias ja instaladas.
 )
 
 :: ====== DEPENDENCIAS FRONTEND ======
 echo.
-echo [INFO] Verificando frontend...
-cd /d "%BASE_DIR%\frontend"
-if not exist "node_modules" (
-    echo [INFO] Instalando dependencias do frontend...
-    call "%NPM_EXE%" install
-    if %errorlevel% neq 0 (
-        echo [ERRO] Falha nas dependencias do frontend.
+echo [INFO] Verificando dependencias do frontend...
+if not exist "!BASE!\frontend\node_modules" (
+    echo [INFO] Instalando... aguarde.
+    cd /d "!BASE!\frontend"
+    call npm install
+    if errorlevel 1 (
+        echo [ERRO] Falha ao instalar dependencias do frontend.
         pause
         exit /b 1
     )
-    echo [OK] Frontend: dependencias instaladas.
+    echo [OK] Dependencias do frontend instaladas.
 ) else (
     echo [OK] Frontend: dependencias ja instaladas.
 )
 
 :: ====== ARQUIVO .ENV ======
-cd /d "%BASE_DIR%\backend"
-if not exist ".env" (
+if not exist "!BASE!\backend\.env" (
     (
         echo PORT=3001
         echo NODE_ENV=development
         echo DATA_DIR=../data
         echo ASSETS_DIR=../assets
         echo TEMP_DIR=../temp
-    ) > .env
+    ) > "!BASE!\backend\.env"
     echo [OK] Arquivo .env criado.
 )
 
 :: ====== INICIAR BACKEND ======
 echo.
-echo [INFO] Iniciando backend (porta 3001)...
-cd /d "%BASE_DIR%\backend"
-start "Backend PUCPR :3001" cmd /k ""%NODE_EXE%" node_modules\.bin\ts-node src\index.ts"
+echo [INFO] Iniciando backend na porta 3001...
+start "Backend PUCPR :3001" /d "!BASE!\backend" cmd /k "npm run dev"
 
-echo [INFO] Aguardando backend inicializar...
+echo [INFO] Aguardando backend inicializar (7s)...
 timeout /t 7 /nobreak >nul
 
 :: ====== INICIAR FRONTEND ======
-echo [INFO] Iniciando frontend (porta 3000)...
-cd /d "%BASE_DIR%\frontend"
-start "Frontend PUCPR :3000" cmd /k ""%NODE_EXE%" node_modules\.bin\vite --port 3000"
+echo [INFO] Iniciando frontend na porta 3000...
+start "Frontend PUCPR :3000" /d "!BASE!\frontend" cmd /k "npm run dev"
 
-echo [INFO] Aguardando frontend inicializar...
+echo [INFO] Aguardando frontend inicializar (8s)...
 timeout /t 8 /nobreak >nul
 
 :: ====== ABRIR NAVEGADOR ======
-echo [INFO] Abrindo navegador...
+echo [INFO] Abrindo http://localhost:3000 ...
 start "" "http://localhost:3000"
 
 echo.
@@ -152,3 +150,4 @@ echo   Para encerrar: feche as janelas do terminal.
 echo =====================================================
 echo.
 pause
+endlocal
