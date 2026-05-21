@@ -40,8 +40,7 @@ export class ExcelReaderService {
   }
 
   private temPendenciaAgenda(chContrato: number, horasAlocar: number): boolean {
-    const diff = chContrato - horasAlocar;
-    return diff > 0;
+    return horasAlocar > 0;
   }
 
   lerPlanilha(caminhoArquivo: string): Docente[] {

@@ -37,12 +37,12 @@ export function Analise() {
               <div style={{ backgroundColor: '#FFE0E0', borderRadius: 8, padding: 16, borderLeft: '4px solid #E5000C' }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#8A0538', margin: '0 0 8px' }}>Pendência de Agenda</h4>
                 <div style={{ backgroundColor: '#8A0538', borderRadius: 6, padding: '8px 12px', marginBottom: 8, fontFamily: 'monospace', fontSize: 13, color: 'white', textAlign: 'center' }}>
-                  (CH Total de Contrato − Horas a Alocar) &gt; 0
+                  Horas a Alocar &gt; 0
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                   <thead>
                     <tr style={{ backgroundColor: '#8A0538' }}>
-                      <th style={{ padding: '6px 10px', color: 'white', textAlign: 'left' }}>Resultado</th>
+                      <th style={{ padding: '6px 10px', color: 'white', textAlign: 'left' }}>Horas a Alocar</th>
                       <th style={{ padding: '6px 10px', color: 'white', textAlign: 'left' }}>Regra</th>
                     </tr>
                   </thead>
@@ -50,7 +50,6 @@ export function Analise() {
                     {[
                       ['Maior que 0', 'Pendência de Agenda', '#FFE0E0', '#E5000C'],
                       ['Igual a 0', 'Sem Pendência', '#EAFFD9', '#4BB218'],
-                      ['Menor que 0', 'Inconsistência', '#FFFDD9', '#FAAD14'],
                     ].map(([res, regra, bg, cor]) => (
                       <tr key={res} style={{ backgroundColor: bg }}>
                         <td style={{ padding: '6px 10px', fontWeight: 600, color: cor, fontSize: 12 }}>{res}</td>

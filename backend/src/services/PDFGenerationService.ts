@@ -4,6 +4,7 @@ import path from 'path';
 import { Docente, SEMANAS_CONFIG, STATUS_TACH_COM_PENDENCIA } from '../types';
 
 const PRIMARY = rgb(138 / 255, 5 / 255, 56 / 255);
+const HEADER_BG = rgb(180 / 255, 25 / 255, 72 / 255);
 const DARK = rgb(30 / 255, 30 / 255, 30 / 255);
 const GRAY = rgb(120 / 255, 120 / 255, 120 / 255);
 const LIGHT_BG = rgb(245 / 255, 245 / 255, 245 / 255);
@@ -51,7 +52,7 @@ export class PDFGenerationService {
     let y = height - 40;
 
     // === CABEÇALHO ===
-    page.drawRectangle({ x: 0, y: height - 100, width, height: 100, color: PRIMARY });
+    page.drawRectangle({ x: 0, y: height - 100, width, height: 100, color: HEADER_BG });
 
     const logoPath = path.join(this.assetsDir, 'logoPUCRelatorio.png');
     if (fs.existsSync(logoPath)) {
@@ -107,6 +108,14 @@ export class PDFGenerationService {
       font: fontBold,
       color: PRIMARY,
     });
+    const nomeWidth = fontBold.widthOfTextAtSize(`Olá, Prof(a). ${docente.nomeDocente}.`, 12);
+    page.drawText(`  |  Matrícula: ${docente.matricula}`, {
+      x: marginX + nomeWidth,
+      y: y + 1,
+      size: 9,
+      font: fontRegular,
+      color: GRAY,
+    });
     y -= 18;
     page.drawText(`Segue o detalhamento das pendências ao longo do mês de ${mesNome}.`, {
       x: marginX,
@@ -155,10 +164,15 @@ export class PDFGenerationService {
         y -= 14;
       };
 
-      drawInfoRow('Matrícula', String(semana.matricula));
       drawInfoRow('CH Contrato', `${semana.chContrato}h`);
-      drawInfoRow('Horas a Alocar', `${semana.horasAlocar}h`);
-      drawInfoRow('Saldo', `${(semana.chContrato - semana.horasAlocar).toFixed(1)}h ${semana.pendenciaAgenda ? '(PENDÊNCIA)' : '(OK)'}`);
+
+      // Horas Pendentes de Alocação — campo em destaque
+      const corHoras = semana.pendenciaAgenda ? WARNING_COLOR : SUCCESS;
+      const bgHoras = semana.pendenciaAgenda ? rgb(1, 0.92, 0.92) : rgb(0.92, 1, 0.92);
+      page.drawRectangle({ x: marginX, y: y - 7, width: width - marginX * 2, height: 22, color: bgHoras, borderColor: corHoras, borderWidth: 1 });
+      page.drawText('Horas Pendentes de Alocação:', { x: marginX + 8, y: y + 3, size: 9, font: fontBold, color: corHoras });
+      page.drawText(`${semana.horasAlocar.toFixed(1)}h  ${semana.pendenciaAgenda ? '(PENDÊNCIA)' : '(OK)'}`, { x: marginX + 190, y: y + 3, size: 9, font: fontBold, color: corHoras });
+      y -= 28;
 
       y -= 4;
 
