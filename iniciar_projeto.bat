@@ -55,7 +55,7 @@ echo [OK] Node.js detectado:
 echo.
 
 :: ====== DIRETORIO BASE ======
-set BASE_DIR=%~dp0..
+set BASE_DIR=%~dp0
 cd /d "%BASE_DIR%"
 
 :: ====== ESTRUTURA DE PASTAS ======

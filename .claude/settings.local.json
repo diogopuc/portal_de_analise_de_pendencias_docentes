@@ -4,7 +4,8 @@
       "Bash(npm --version)",
       "Bash(winget install *)",
       "Read(//c/Users/diogo.jooliveira/**)",
-      "Bash(powershell -Command ' *)"
+      "Bash(powershell -Command ' *)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
