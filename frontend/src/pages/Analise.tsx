@@ -150,7 +150,7 @@ export function Analise() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
                 { status: 'APROVADO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Sem pendência — não exibido no relatório' },
-                { status: 'FINALIZADO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Finalizado mas aguardando aprovação' },
+                { status: 'FINALIZADO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Finalizado por importação — docente precisa refazer o TACH' },
                 { status: 'AGUARDANDO APROVAÇÃO', cor: '#FAAD14', bg: '#FFFDD9', desc: 'Submetido, aguardando análise' },
                 { status: 'RASCUNHO', cor: '#863BFF', bg: '#EFE4FF', desc: 'Em elaboração, não submetido' },
                 { status: 'NÃO CRIADO', cor: '#E5000C', bg: '#FFE0E0', desc: 'TACH não foi criado no sistema' },
