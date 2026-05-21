@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Download, Trash2, Search, Archive, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { Download, Trash2, Search, Archive, ChevronLeft, ChevronRight, FileText, ExternalLink } from 'lucide-react';
 import { relatoriosAPI } from '../services/api';
 import { Card } from '../components/ui/Card';
 import { SkeletonTable } from '../components/ui/Skeleton';
@@ -125,10 +125,19 @@ export function TodosRelatorios() {
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <a
+                        href={relatoriosAPI.getVisualizarUrl(r.nomeArquivo)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Abrir PDF"
+                        style={{ padding: '6px 10px', border: '1px solid #8A0538', borderRadius: 6, cursor: 'pointer', background: '#8A0538', display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}
+                      >
+                        <ExternalLink size={13} />
+                      </a>
+                      <a
                         href={relatoriosAPI.getDownloadUrl(r.nomeArquivo)}
                         download
                         title="Download"
-                        style={{ padding: '6px 10px', border: '1px solid #8A0538', borderRadius: 6, cursor: 'pointer', background: '#8A0538', display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}
+                        style={{ padding: '6px 10px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: '#F5F5F5', display: 'flex', alignItems: 'center', color: '#404040', textDecoration: 'none' }}
                       >
                         <Download size={13} />
                       </a>

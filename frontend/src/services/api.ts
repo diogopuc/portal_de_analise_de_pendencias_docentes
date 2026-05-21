@@ -36,5 +36,6 @@ export const relatoriosAPI = {
   getStatus: () => api.get<ProcessingStatus>('/relatorios/status').then(r => r.data),
   getLogs: () => api.get<LogEntry[]>('/relatorios/logs').then(r => r.data),
   getDownloadUrl: (nomeArquivo: string) => `/api/relatorios/download/${nomeArquivo}`,
+  getVisualizarUrl: (nomeArquivo: string) => `/api/relatorios/visualizar/${nomeArquivo}`,
   getZipUrl: () => `/api/relatorios/download-zip/todos`,
 };

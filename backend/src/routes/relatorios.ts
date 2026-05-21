@@ -97,6 +97,15 @@ export function relatoriosRoutes(
     res.download(caminho, nomeArquivo);
   });
 
+  router.get('/visualizar/:nomeArquivo', (req: Request, res: Response) => {
+    const nomeArquivo = path.basename(req.params.nomeArquivo);
+    const caminho = path.join(dataDir, 'relatorios', nomeArquivo);
+    if (!fs.existsSync(caminho)) return res.status(404).json({ erro: 'Arquivo não encontrado' });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${nomeArquivo}"`);
+    res.sendFile(caminho);
+  });
+
   router.get('/download-zip/todos', async (req: Request, res: Response) => {
     const relatoriosDir = path.join(dataDir, 'relatorios');
     const pdfs = pdfService.listarPDFs();
