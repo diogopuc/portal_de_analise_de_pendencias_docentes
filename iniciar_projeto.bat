@@ -11,9 +11,6 @@ echo   Grupo Marista - GPCA
 echo =====================================================
 echo.
 
-:: %~dp0 ja traz o caminho com \ no final - nao armazenar em variavel
-:: pois delayed expansion corrompe caracteres acentuados do caminho
-
 :: ====== DETECTAR NODE.JS ======
 echo [INFO] Verificando Node.js...
 node --version >nul 2>&1
@@ -45,7 +42,6 @@ if not exist "%~dp0data\logs"       mkdir "%~dp0data\logs"
 if not exist "%~dp0data\relatorios" mkdir "%~dp0data\relatorios"
 if not exist "%~dp0data\cache"      mkdir "%~dp0data\cache"
 if not exist "%~dp0temp"            mkdir "%~dp0temp"
-echo [OK] Pastas OK.
 
 :: ====== COPIAR EXCEL ======
 if exist "%~dp0Atv_Pendentes_Abril.xlsx" (
@@ -60,12 +56,7 @@ if not exist "%~dp0backend\node_modules" (
     echo [INFO] Instalando dependencias do backend...
     pushd "%~dp0backend"
     call npm install
-    if errorlevel 1 (
-        popd
-        echo [ERRO] Falha ao instalar dependencias do backend.
-        pause
-        exit /b 1
-    )
+    if errorlevel 1 ( popd & echo [ERRO] Falha no backend. & pause & exit /b 1 )
     popd
     echo [OK] Backend instalado.
 ) else (
@@ -77,12 +68,7 @@ if not exist "%~dp0frontend\node_modules" (
     echo [INFO] Instalando dependencias do frontend...
     pushd "%~dp0frontend"
     call npm install
-    if errorlevel 1 (
-        popd
-        echo [ERRO] Falha ao instalar dependencias do frontend.
-        pause
-        exit /b 1
-    )
+    if errorlevel 1 ( popd & echo [ERRO] Falha no frontend. & pause & exit /b 1 )
     popd
     echo [OK] Frontend instalado.
 ) else (
@@ -98,27 +84,36 @@ if not exist "%~dp0backend\.env" (
         echo ASSETS_DIR=../assets
         echo TEMP_DIR=../temp
     ) > "%~dp0backend\.env"
-    echo [OK] .env criado.
 )
 
-:: ====== ENCERRAR PROCESSOS ANTERIORES ======
+:: ====== LIBERAR PORTAS ======
 echo.
 echo [INFO] Liberando portas 3000 e 3001...
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3001 "') do taskkill /F /PID %%p >nul 2>&1
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3000 "') do taskkill /F /PID %%p >nul 2>&1
 timeout /t 1 /nobreak >nul
 
-:: ====== INICIAR BACKEND ======
-echo [INFO] Iniciando backend na porta 3001...
-start "Backend PUCPR :3001" /d "%~dp0backend" cmd /k "npm run dev"
+:: ====== INICIAR BACKEND (background, nesta janela) ======
+echo [INFO] Iniciando backend...
+pushd "%~dp0backend"
+start /B npm run dev >nul 2>nul
+popd
 echo [INFO] Aguardando backend (7s)...
 timeout /t 7 /nobreak >nul
 
-:: ====== INICIAR FRONTEND ======
-echo [INFO] Iniciando frontend na porta 3000...
-start "Frontend PUCPR :3000" /d "%~dp0frontend" cmd /k "npm run dev"
+:: ====== INICIAR FRONTEND (background, nesta janela) ======
+echo [INFO] Iniciando frontend...
+pushd "%~dp0frontend"
+start /B npm run dev >nul 2>nul
+popd
 echo [INFO] Aguardando frontend (8s)...
 timeout /t 8 /nobreak >nul
+
+:: ====== VERIFICAR PORTAS ======
+netstat -aon 2>nul | findstr ":3001 " >nul
+if errorlevel 1 echo [AVISO] Backend pode nao ter iniciado corretamente.
+netstat -aon 2>nul | findstr ":3000 " >nul
+if errorlevel 1 echo [AVISO] Frontend pode nao ter iniciado corretamente.
 
 :: ====== ABRIR NAVEGADOR ======
 echo [INFO] Abrindo navegador...
@@ -126,15 +121,16 @@ rundll32 url.dll,FileProtocolHandler http://localhost:3000
 
 :: ====== MENU DE CONTROLE ======
 :menu
+cls
 echo.
 echo =====================================================
-echo   [OK] SISTEMA RODANDO
+echo   [OK] PORTAL DE PENDENCIAS RODANDO
 echo.
 echo   Frontend : http://localhost:3000
 echo   Backend  : http://localhost:3001/api/health
 echo.
-echo   1 - Abrir navegador novamente
-echo   2 - Encerrar tudo e fechar
+echo   1 - Abrir navegador
+echo   2 - Encerrar tudo
 echo =====================================================
 echo.
 set "op="
@@ -150,11 +146,9 @@ goto :menu
 :shutdown
 echo.
 echo [INFO] Encerrando servicos...
-taskkill /FI "WINDOWTITLE eq Backend PUCPR :3001" /F >nul 2>&1
-taskkill /FI "WINDOWTITLE eq Frontend PUCPR :3000" /F >nul 2>&1
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3001 "') do taskkill /F /PID %%p >nul 2>&1
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3000 "') do taskkill /F /PID %%p >nul 2>&1
-echo [OK] Servicos encerrados.
+echo [OK] Encerrado.
 timeout /t 2 /nobreak >nul
 endlocal
 exit /b 0
