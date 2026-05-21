@@ -3,9 +3,10 @@ import { Menu } from 'lucide-react';
 interface HeaderProps {
   sidebarAberta: boolean;
   onToggleSidebar: () => void;
+  percRevisado?: number;
 }
 
-export function Header({ sidebarAberta, onToggleSidebar }: HeaderProps) {
+export function Header({ sidebarAberta, onToggleSidebar, percRevisado }: HeaderProps) {
   return (
     <header
       style={{ backgroundColor: '#8A0538', height: 64 }}
@@ -37,9 +38,26 @@ export function Header({ sidebarAberta, onToggleSidebar }: HeaderProps) {
         </div>
       </div>
 
-      <div className="ml-auto px-6 flex items-center gap-2">
-        <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#7EE543' }} />
-        <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12 }}>Sistema Online</span>
+      <div className="ml-auto px-6 flex items-center gap-3">
+        {percRevisado !== undefined && (
+          <span style={{
+            backgroundColor: 'rgba(255,255,255,0.15)',
+            color: 'white',
+            borderRadius: 20,
+            padding: '3px 12px',
+            fontSize: 12,
+            fontWeight: 600,
+            border: '1px solid rgba(255,255,255,0.3)',
+            whiteSpace: 'nowrap',
+          }}>
+            {percRevisado}% revisado
+          </span>
+        )}
+        <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.2)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#7EE543' }} />
+          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, whiteSpace: 'nowrap' }}>Sistema Online</span>
+        </div>
       </div>
     </header>
   );

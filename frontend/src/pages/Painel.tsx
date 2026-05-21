@@ -55,10 +55,6 @@ export function Painel() {
     );
   }
 
-  const percRevisado = data.totalDocentes > 0
-    ? Math.round(((data.totalPendenciaAgenda + data.totalPendenciaTach) / (data.totalDocentes * 2)) * 100)
-    : 0;
-
   return (
     <div className="animate-fadeIn">
       {/* Título */}
@@ -73,13 +69,6 @@ export function Painel() {
           <RefreshCw size={15} className={isFetching ? 'animate-spin' : ''} />
           {isFetching ? 'Atualizando...' : 'Atualizar'}
         </button>
-      </div>
-
-      {/* Badge revisado */}
-      <div style={{ position: 'fixed', top: 16, right: 80, zIndex: 100 }}>
-        <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, border: '1px solid rgba(255,255,255,0.4)' }}>
-          {percRevisado}% revisado
-        </span>
       </div>
 
       {/* Cards de estatísticas */}
