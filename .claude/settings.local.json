@@ -5,7 +5,9 @@
       "Bash(winget install *)",
       "Read(//c/Users/diogo.jooliveira/**)",
       "Bash(powershell -Command ' *)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s -X POST \"http://localhost:3001/api/relatorios/gerar/8306\")",
+      "Bash(node -e ' *)"
     ]
   }
 }

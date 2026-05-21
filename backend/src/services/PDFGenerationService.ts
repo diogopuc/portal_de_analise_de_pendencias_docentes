@@ -58,12 +58,25 @@ export class PDFGenerationService {
       try {
         const logoBytes = fs.readFileSync(logoPath);
         const logoImg = await pdfDoc.embedPng(logoBytes);
-        const logoScale = Math.min(120 / logoImg.width, 55 / logoImg.height);
+        const logoScale = Math.min(110 / logoImg.width, 50 / logoImg.height);
+        const logoW = logoImg.width * logoScale;
+        const logoH = logoImg.height * logoScale;
+        const logoPadX = 10;
+        const logoPadY = 8;
+        // Fundo branco atrás da logo
+        page.drawRectangle({
+          x: marginX - logoPadX,
+          y: height - 85 - logoPadY,
+          width: logoW + logoPadX * 2,
+          height: logoH + logoPadY * 2,
+          color: WHITE,
+          borderRadius: 4,
+        });
         page.drawImage(logoImg, {
           x: marginX,
           y: height - 85,
-          width: logoImg.width * logoScale,
-          height: logoImg.height * logoScale,
+          width: logoW,
+          height: logoH,
         });
       } catch (_) {}
     }
