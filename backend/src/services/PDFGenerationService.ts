@@ -71,7 +71,6 @@ export class PDFGenerationService {
           width: logoW + logoPadX * 2,
           height: logoH + logoPadY * 2,
           color: WHITE,
-          borderRadius: 4,
         });
         page.drawImage(logoImg, {
           x: marginX,
