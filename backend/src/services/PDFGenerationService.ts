@@ -52,9 +52,9 @@ export class PDFGenerationService {
     let y = height - 40;
 
     // === CABEÇALHO ===
-    page.drawRectangle({ x: 0, y: height - 100, width, height: 100, color: HEADER_BG });
+    page.drawRectangle({ x: 0, y: height - 100, width, height: 100, color: PRIMARY });
 
-    const logoPath = path.join(this.assetsDir, 'logoPUCRelatorio.png');
+    const logoPath = path.join(this.assetsDir, 'logoPUCPRBranca.png');
     if (fs.existsSync(logoPath)) {
       try {
         const logoBytes = fs.readFileSync(logoPath);
@@ -62,16 +62,6 @@ export class PDFGenerationService {
         const logoScale = Math.min(110 / logoImg.width, 50 / logoImg.height);
         const logoW = logoImg.width * logoScale;
         const logoH = logoImg.height * logoScale;
-        const logoPadX = 10;
-        const logoPadY = 8;
-        // Fundo branco atrás da logo
-        page.drawRectangle({
-          x: marginX - logoPadX,
-          y: height - 85 - logoPadY,
-          width: logoW + logoPadX * 2,
-          height: logoH + logoPadY * 2,
-          color: WHITE,
-        });
         page.drawImage(logoImg, {
           x: marginX,
           y: height - 85,
