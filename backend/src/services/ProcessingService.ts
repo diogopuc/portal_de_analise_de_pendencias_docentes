@@ -100,7 +100,7 @@ export class ProcessingService {
 
     const campusMap = new Map<string, number>();
     this.docentes.forEach(d => {
-      const c = d.campus || 'Desconhecido';
+      const c = (d.campus || 'Desconhecido').trim().toUpperCase();
       campusMap.set(c, (campusMap.get(c) || 0) + 1);
     });
     const porCampus = Array.from(campusMap.entries())

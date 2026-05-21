@@ -140,21 +140,23 @@ export function Painel() {
           <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
             PENDENTES POR CAMPUS
           </h3>
-          {data.porCampus.slice(0, 5).map((item, i) => {
-            const max = data.porCampus[0]?.total || 1;
-            const pct = Math.round((item.total / max) * 100);
-            return (
-              <div key={i} style={{ marginBottom: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 13, color: '#404040', fontWeight: 500 }}>{item.campus}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#8A0538' }}>{item.total}</span>
+          {(() => {
+            const totalCampus = data.porCampus.slice(0, 5).reduce((s, d) => s + d.total, 0) || 1;
+            return data.porCampus.slice(0, 5).map((item, i) => {
+              const pct = Math.max(Math.round((item.total / totalCampus) * 100), 2);
+              return (
+                <div key={i} style={{ marginBottom: 14 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                    <span style={{ fontSize: 13, color: '#404040', fontWeight: 500 }}>{item.campus}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#8A0538' }}>{item.total}</span>
+                  </div>
+                  <div style={{ backgroundColor: '#E4E4E4', borderRadius: 6, height: 10 }}>
+                    <div style={{ width: `${pct}%`, height: '100%', backgroundColor: '#8A0538', borderRadius: 6, transition: 'width 0.6s ease' }} />
+                  </div>
                 </div>
-                <div style={{ backgroundColor: '#E4E4E4', borderRadius: 4, height: 6 }}>
-                  <div style={{ width: `${pct}%`, height: '100%', backgroundColor: '#8A0538', borderRadius: 4, transition: 'width 0.5s ease' }} />
-                </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </Card>
 
         {/* Status TACH */}
@@ -162,23 +164,25 @@ export function Painel() {
           <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
             DISTRIBUIÇÃO STATUS TACH
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {data.statusTachDistribuicao.slice(0, 6).map((item, i) => {
-              const max = data.statusTachDistribuicao[0]?.total || 1;
-              const pct = Math.round((item.total / max) * 100);
-              const cor = CORES_TACH[item.status] || '#787878';
-              return (
-                <div key={i}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, color: '#404040' }}>{item.status}</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: cor }}>{item.total}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {(() => {
+              const totalTach = data.statusTachDistribuicao.slice(0, 6).reduce((s, d) => s + d.total, 0) || 1;
+              return data.statusTachDistribuicao.slice(0, 6).map((item, i) => {
+                const pct = Math.max(Math.round((item.total / totalTach) * 100), 2);
+                const cor = CORES_TACH[item.status] || '#787878';
+                return (
+                  <div key={i}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                      <span style={{ fontSize: 12, color: '#404040' }}>{item.status}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: cor }}>{item.total}</span>
+                    </div>
+                    <div style={{ backgroundColor: '#E4E4E4', borderRadius: 6, height: 10 }}>
+                      <div style={{ width: `${pct}%`, height: '100%', backgroundColor: cor, borderRadius: 6, transition: 'width 0.6s ease' }} />
+                    </div>
                   </div>
-                  <div style={{ backgroundColor: '#E4E4E4', borderRadius: 4, height: 5 }}>
-                    <div style={{ width: `${pct}%`, height: '100%', backgroundColor: cor, borderRadius: 4 }} />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </div>
         </Card>
       </div>
