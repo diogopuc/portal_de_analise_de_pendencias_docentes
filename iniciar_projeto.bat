@@ -10,7 +10,6 @@ echo   Grupo Marista - GPCA
 echo =====================================================
 echo.
 
-:: BASE = pasta onde este .bat esta (sem trailing backslash)
 set "BASE=%~dp0"
 if "!BASE:~-1!"=="\" set "BASE=!BASE:~0,-1!"
 
@@ -26,21 +25,18 @@ if not errorlevel 1 (
     goto :node_ok
 )
 
-:: Node portable (instalado nesta sessao)
 if exist "%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe" (
     set "PATH=%USERPROFILE%\node-portable\node-v20.19.2-win-x64;!PATH!"
     echo [OK] Node.js portable configurado.
     goto :node_ok
 )
 
-:: Instalacao padrao do Windows
 if exist "C:\Program Files\nodejs\node.exe" (
     set "PATH=C:\Program Files\nodejs;!PATH!"
     echo [OK] Node.js encontrado em Program Files.
     goto :node_ok
 )
 
-:: Instalacao via nvm/fnm/chocolatey
 if exist "%APPDATA%\nvm\current\node.exe" (
     set "PATH=%APPDATA%\nvm\current;!PATH!"
     echo [OK] Node.js encontrado via nvm.
@@ -136,18 +132,37 @@ echo [INFO] Aguardando frontend inicializar (8s)...
 timeout /t 8 /nobreak >nul
 
 :: ====== ABRIR NAVEGADOR ======
-echo [INFO] Abrindo http://localhost:3000 ...
-start "" "http://localhost:3000"
+echo [INFO] Abrindo navegador...
+start "" http://localhost:3000
 
+:: ====== PAINEL DE CONTROLE ======
 echo.
 echo =====================================================
-echo   [OK] Portal iniciado com sucesso!
+echo   [OK] SISTEMA INICIADO COM SUCESSO!
 echo.
 echo   Frontend : http://localhost:3000
 echo   Backend  : http://localhost:3001/api/health
 echo.
-echo   Para encerrar: feche as janelas do terminal.
+echo   Pressione ENTER para ENCERRAR tudo.
 echo =====================================================
 echo.
-pause
+set /p "dummy=> "
+
+:: ====== ENCERRAR TUDO ======
+echo.
+echo [INFO] Encerrando servicos...
+
+taskkill /FI "WINDOWTITLE eq Backend PUCPR :3001" /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq Frontend PUCPR :3000" /F >nul 2>&1
+
+for /f "tokens=5" %%p in ('netstat -aon ^| findstr ":3001 " 2^>nul') do (
+    taskkill /F /PID %%p >nul 2>&1
+)
+for /f "tokens=5" %%p in ('netstat -aon ^| findstr ":3000 " 2^>nul') do (
+    taskkill /F /PID %%p >nul 2>&1
+)
+
+echo [OK] Servicos encerrados.
+echo.
+timeout /t 2 /nobreak >nul
 endlocal
