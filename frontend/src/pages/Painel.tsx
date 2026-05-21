@@ -74,8 +74,8 @@ export function Painel() {
       {/* Cards de estatísticas */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 16, marginBottom: 24 }}>
         <StatCard titulo="Total de Docentes" valor={data.totalDocentes} subtitulo="docentes na planilha" icon={<Users size={20} />} cor="#8A0538" />
-        <StatCard titulo="Pendência de Agenda" valor={data.totalPendenciaAgenda} subtitulo="aguardando regularização" icon={<AlertTriangle size={20} />} cor="#E5000C" />
-        <StatCard titulo="Pendência de TACH" valor={data.totalPendenciaTach} subtitulo="status em aberto" icon={<Clock size={20} />} cor="#FAAD14" />
+        <StatCard titulo="Pendência de Agenda" valor={data.totalPendenciaAgenda} subtitulo="docentes com horas a alocar" icon={<AlertTriangle size={20} />} cor="#E5000C" />
+        <StatCard titulo="Pendência de TACH" valor={data.totalPendenciaTach} subtitulo="docentes com pendencia no TACH" icon={<Clock size={20} />} cor="#FAAD14" />
         <StatCard titulo="Pendência Simultânea" valor={data.totalSimultaneo} subtitulo="agenda + TACH" icon={<AlertTriangle size={20} />} cor="#8C0E28" destaque />
       </div>
 
