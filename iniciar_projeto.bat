@@ -41,7 +41,6 @@ if exist "%APPDATA%\nvm\current\node.exe" (
 :: ====== BAIXAR NODE.JS ======
 echo.
 echo [INFO] Node.js nao encontrado. Baixando automaticamente...
-echo [INFO] Aguarde alguns minutos.
 echo.
 
 set "NODE_ZIP=%TEMP%\node-v20.19.2-win-x64.zip"
@@ -85,7 +84,6 @@ set "PATH=!NODE_DEST!\node-v20.19.2-win-x64;!PATH!"
 echo [OK] Node.js instalado com sucesso.
 
 :node_ok
-echo.
 node --version
 npm --version
 echo.
@@ -106,16 +104,16 @@ if exist "%~dp0Atv_Pendentes_Abril.xlsx" (
 :: ====== DEPENDENCIAS BACKEND ======
 echo [INFO] Verificando dependencias do backend...
 if not exist "%~dp0backend\node_modules" (
-    echo [INFO] Instalando dependencias do backend...
+    echo [INFO] Instalando... aguarde.
     pushd "%~dp0backend"
     call npm install
-    set "ERR=!errorlevel!"
-    popd
-    if !ERR! NEQ 0 (
-        echo [ERRO] Falha ao instalar dependencias do backend.
+    if errorlevel 1 (
+        popd
+        echo [ERRO] Falha nas dependencias do backend.
         pause
         exit /b 1
     )
+    popd
     echo [OK] Backend instalado.
 ) else (
     echo [OK] Backend OK.
@@ -124,16 +122,16 @@ if not exist "%~dp0backend\node_modules" (
 :: ====== DEPENDENCIAS FRONTEND ======
 echo [INFO] Verificando dependencias do frontend...
 if not exist "%~dp0frontend\node_modules" (
-    echo [INFO] Instalando dependencias do frontend...
+    echo [INFO] Instalando... aguarde.
     pushd "%~dp0frontend"
     call npm install
-    set "ERR=!errorlevel!"
-    popd
-    if !ERR! NEQ 0 (
-        echo [ERRO] Falha ao instalar dependencias do frontend.
+    if errorlevel 1 (
+        popd
+        echo [ERRO] Falha nas dependencias do frontend.
         pause
         exit /b 1
     )
+    popd
     echo [OK] Frontend instalado.
 ) else (
     echo [OK] Frontend OK.
@@ -159,15 +157,11 @@ timeout /t 1 /nobreak >nul
 
 :: ====== INICIAR SERVICOS ======
 echo [INFO] Iniciando backend...
-pushd "%~dp0backend"
-start /B npm run dev
-popd
-timeout /t 10 /nobreak >nul
+start "Backend - PUCPR :3001" /d "%~dp0backend" cmd /k "npm run dev"
+timeout /t 8 /nobreak >nul
 
 echo [INFO] Iniciando frontend...
-pushd "%~dp0frontend"
-start /B npm run dev
-popd
+start "Frontend - PUCPR :3000" /d "%~dp0frontend" cmd /k "npm run dev"
 timeout /t 10 /nobreak >nul
 
 :: ====== ABRIR NAVEGADOR ======
@@ -178,7 +172,7 @@ rundll32 url.dll,FileProtocolHandler http://localhost:3000
 :menu
 echo.
 echo =====================================================
-echo   [OK] PORTAL DE PENDENCIAS RODANDO
+echo   [OK] SISTEMA RODANDO
 echo.
 echo   Frontend : http://localhost:3000
 echo   Backend  : http://localhost:3001/api/health
@@ -199,6 +193,8 @@ goto :menu
 :shutdown
 echo.
 echo [INFO] Encerrando servicos...
+taskkill /FI "WINDOWTITLE eq Backend - PUCPR :3001" /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq Frontend - PUCPR :3000" /F >nul 2>&1
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3001 "') do taskkill /F /PID %%p >nul 2>&1
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3000 "') do taskkill /F /PID %%p >nul 2>&1
 echo [OK] Encerrado.
