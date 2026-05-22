@@ -13,28 +13,76 @@ echo.
 
 :: ====== DETECTAR NODE.JS ======
 echo [INFO] Verificando Node.js...
+
 node --version >nul 2>&1
 if not errorlevel 1 goto :node_ok
 
 if exist "%USERPROFILE%\node-portable\node-v20.19.2-win-x64\node.exe" (
     set "PATH=%USERPROFILE%\node-portable\node-v20.19.2-win-x64;%PATH%"
+    echo [OK] Node.js portable encontrado.
     goto :node_ok
 )
+
 if exist "C:\Program Files\nodejs\node.exe" (
     set "PATH=C:\Program Files\nodejs;%PATH%"
+    echo [OK] Node.js encontrado em Program Files.
     goto :node_ok
 )
+
 if exist "%APPDATA%\nvm\current\node.exe" (
     set "PATH=%APPDATA%\nvm\current;%PATH%"
+    echo [OK] Node.js encontrado via nvm.
     goto :node_ok
 )
 
-echo [ERRO] Node.js nao encontrado. Instale em: https://nodejs.org
-pause
-exit /b 1
+:: ====== NODE NAO ENCONTRADO — BAIXAR AUTOMATICAMENTE ======
+echo [INFO] Node.js nao encontrado. Iniciando download automatico...
+echo [INFO] Isso pode levar alguns minutos dependendo da conexao.
+echo.
+
+set "NODE_ZIP=%TEMP%\node-v20.19.2-win-x64.zip"
+set "NODE_DEST=%USERPROFILE%\node-portable"
+set "NODE_URL=https://nodejs.org/dist/v20.19.2/node-v20.19.2-win-x64.zip"
+set "NODE_EXE=!NODE_DEST!\node-v20.19.2-win-x64\node.exe"
+
+:: Tenta baixar com curl (disponivel no Windows 10+)
+echo [INFO] Baixando Node.js v20.19.2 (aprox. 20 MB)...
+curl.exe -L --progress-bar -o "!NODE_ZIP!" "!NODE_URL!" 2>nul
+
+:: Se curl falhou, usa PowerShell como alternativa
+if not exist "!NODE_ZIP!" (
+    echo [INFO] curl indisponivel. Usando PowerShell...
+    powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri '!NODE_URL!' -OutFile '!NODE_ZIP!'"
+)
+
+if not exist "!NODE_ZIP!" (
+    echo.
+    echo [ERRO] Nao foi possivel baixar o Node.js automaticamente.
+    echo        Instale manualmente em: https://nodejs.org/pt/download
+    echo.
+    pause
+    exit /b 1
+)
+
+echo [INFO] Extraindo Node.js...
+if not exist "!NODE_DEST!" mkdir "!NODE_DEST!"
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; Expand-Archive -Path '!NODE_ZIP!' -DestinationPath '!NODE_DEST!' -Force"
+del "!NODE_ZIP!" >nul 2>&1
+
+if not exist "!NODE_EXE!" (
+    echo [ERRO] Falha ao extrair o Node.js.
+    echo        Instale manualmente em: https://nodejs.org/pt/download
+    pause
+    exit /b 1
+)
+
+set "PATH=!NODE_DEST!\node-v20.19.2-win-x64;!PATH!"
+echo [OK] Node.js instalado com sucesso!
 
 :node_ok
-echo [OK] Node.js pronto.
+echo.
+node --version
+npm --version
 echo.
 
 :: ====== ESTRUTURA DE PASTAS ======
@@ -93,7 +141,7 @@ for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3001 "') do taskkill
 for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3000 "') do taskkill /F /PID %%p >nul 2>&1
 timeout /t 1 /nobreak >nul
 
-:: ====== INICIAR BACKEND (background, nesta janela) ======
+:: ====== INICIAR BACKEND ======
 echo [INFO] Iniciando backend...
 pushd "%~dp0backend"
 start /B npm run dev >nul 2>nul
@@ -101,7 +149,7 @@ popd
 echo [INFO] Aguardando backend (7s)...
 timeout /t 7 /nobreak >nul
 
-:: ====== INICIAR FRONTEND (background, nesta janela) ======
+:: ====== INICIAR FRONTEND ======
 echo [INFO] Iniciando frontend...
 pushd "%~dp0frontend"
 start /B npm run dev >nul 2>nul
