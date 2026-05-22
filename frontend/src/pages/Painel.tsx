@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
+  PieChart, Pie, Cell,
 } from 'recharts';
 import { Users, AlertTriangle, Clock, RefreshCw } from 'lucide-react';
 import { dashboardAPI } from '../services/api';
@@ -104,28 +104,26 @@ export function Painel() {
           <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
             TIPOS DE PENDÊNCIA
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={[
                   { name: 'Somente Agenda', value: data.totalPendenciaAgenda - data.totalSimultaneo },
                   { name: 'Somente TACH', value: data.totalPendenciaTach - data.totalSimultaneo },
                   { name: 'Simultânea', value: data.totalSimultaneo },
-                  { name: 'Sem Pendência', value: data.semPendencia },
                 ].filter(d => d.value > 0)}
                 cx="50%"
                 cy="50%"
                 innerRadius={55}
-                outerRadius={90}
+                outerRadius={80}
                 paddingAngle={3}
                 dataKey="value"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                labelLine={false}
+                labelLine={true}
               >
                 <Cell fill="#E5000C" />
                 <Cell fill="#FAAD14" />
                 <Cell fill="#8A0538" />
-                <Cell fill="#4BB218" />
               </Pie>
               <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
             </PieChart>
