@@ -7,7 +7,10 @@
       "Bash(powershell -Command ' *)",
       "Bash(python3 -c ' *)",
       "Bash(curl -s -X POST \"http://localhost:3001/api/relatorios/gerar/8306\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(cmd.exe /c \"node --version\")",
+      "Bash(powershell.exe -Command \"Set-Location 'c:\\\\Users\\\\diogo.jooliveira\\\\Grupo Marista\\\\Diretório Controle Acadêmico - Documentos\\\\10_Analistas\\\\10.10_Diogo\\\\3 - Automações\\\\4 - Pendencias_Agenda_E_TACH\\\\backend'; node --version; npm --version\")",
+      "Bash(powershell.exe -Command ' *)"
     ]
   }
 }
