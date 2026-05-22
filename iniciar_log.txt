@@ -1,0 +1,5 @@
+Iniciando bat em 22/05/2026 14:18:31,28 
+[PASSO 1] Verificando Node.js 
+[OK] Node.js portable encontrado 
+[PASSO 4] Node.js OK 
+v20.19.2

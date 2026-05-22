@@ -187,12 +187,12 @@ echo [PASSO 9] Iniciando servicos >> "!LOG!"
 echo [INFO] Iniciando backend e frontend...
 
 pushd "%~dp0backend"
-start /B npm run dev >> "!LOG!" 2>&1
+start /B npm run dev
 popd
 timeout /t 10 /nobreak >nul
 
 pushd "%~dp0frontend"
-start /B npm run dev >> "!LOG!" 2>&1
+start /B npm run dev
 popd
 timeout /t 10 /nobreak >nul
 
