@@ -2,9 +2,14 @@ export function Footer() {
   return (
     <footer
       style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
         backgroundColor: '#1E1E1E',
         borderTop: '1px solid #2a2a2a',
-        padding: '12px 32px',
+        padding: '10px 32px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

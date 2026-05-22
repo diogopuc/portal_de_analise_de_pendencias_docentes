@@ -21,7 +21,7 @@ export function Layout() {
             flexDirection: 'column',
           }}
         >
-          <div style={{ flex: 1, padding: '24px 32px', backgroundColor: '#F0F2F2' }}>
+          <div style={{ flex: 1, padding: '24px 32px 60px', backgroundColor: '#F0F2F2' }}>
             <Outlet />
           </div>
           <Footer />
