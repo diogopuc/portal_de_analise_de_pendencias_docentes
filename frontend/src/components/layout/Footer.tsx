@@ -1,10 +1,14 @@
-export function Footer() {
+interface FooterProps {
+  marginLeft?: number;
+}
+
+export function Footer({ marginLeft = 0 }: FooterProps) {
   return (
     <footer
       style={{
         position: 'fixed',
         bottom: 0,
-        left: 0,
+        left: marginLeft,
         right: 0,
         zIndex: 40,
         backgroundColor: '#1E1E1E',

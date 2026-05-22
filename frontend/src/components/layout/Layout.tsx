@@ -6,6 +6,7 @@ import { Footer } from './Footer';
 
 export function Layout() {
   const [sidebarAberta, setSidebarAberta] = useState(true);
+  const sidebarW = sidebarAberta ? 220 : 56;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -15,7 +16,7 @@ export function Layout() {
         <main
           className="sidebar-transition flex-1 flex flex-col"
           style={{
-            marginLeft: sidebarAberta ? 220 : 56,
+            marginLeft: sidebarW,
             minHeight: 'calc(100vh - 64px)',
             display: 'flex',
             flexDirection: 'column',
@@ -24,9 +25,9 @@ export function Layout() {
           <div style={{ flex: 1, padding: '24px 32px 60px', backgroundColor: '#F0F2F2' }}>
             <Outlet />
           </div>
-          <Footer />
         </main>
       </div>
+      <Footer marginLeft={sidebarW} />
     </div>
   );
 }
