@@ -35,53 +35,63 @@ if exist "%APPDATA%\nvm\current\node.exe" (
     goto :node_ok
 )
 
-:: ====== NODE NAO ENCONTRADO — BAIXAR AUTOMATICAMENTE ======
-echo [INFO] Node.js nao encontrado. Iniciando download automatico...
-echo [INFO] Isso pode levar alguns minutos dependendo da conexao.
+:: ====== NODE NAO ENCONTRADO - BAIXAR AUTOMATICAMENTE ======
+echo.
+echo [INFO] Node.js nao encontrado. Baixando automaticamente...
+echo [INFO] Aguarde, isso pode levar alguns minutos.
 echo.
 
 set "NODE_ZIP=%TEMP%\node-v20.19.2-win-x64.zip"
 set "NODE_DEST=%USERPROFILE%\node-portable"
 set "NODE_URL=https://nodejs.org/dist/v20.19.2/node-v20.19.2-win-x64.zip"
-set "NODE_EXE=!NODE_DEST!\node-v20.19.2-win-x64\node.exe"
 
-:: Tenta baixar com curl (disponivel no Windows 10+)
-echo [INFO] Baixando Node.js v20.19.2 (aprox. 20 MB)...
-curl.exe -L --progress-bar -o "!NODE_ZIP!" "!NODE_URL!" 2>nul
+:: Remove ZIP anterior se existir
+if exist "!NODE_ZIP!" del "!NODE_ZIP!" >nul 2>&1
 
-:: Se curl falhou, usa PowerShell como alternativa
+:: Tentativa 1: curl (Windows 10+)
+echo [INFO] Tentativa de download via curl...
+curl.exe -L --progress-bar -o "!NODE_ZIP!" "!NODE_URL!"
+
+:: Tentativa 2: PowerShell com ExecutionPolicy Bypass
 if not exist "!NODE_ZIP!" (
-    echo [INFO] curl indisponivel. Usando PowerShell...
-    powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri '!NODE_URL!' -OutFile '!NODE_ZIP!'"
+    echo [INFO] Tentando via PowerShell...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri '!NODE_URL!' -OutFile '!NODE_ZIP!'"
 )
 
 if not exist "!NODE_ZIP!" (
     echo.
-    echo [ERRO] Nao foi possivel baixar o Node.js automaticamente.
-    echo        Instale manualmente em: https://nodejs.org/pt/download
+    echo [ERRO] Falha no download do Node.js.
+    echo        Baixe manualmente em: https://nodejs.org/pt/download
+    echo        e instale antes de rodar este script.
     echo.
     pause
     exit /b 1
 )
 
-echo [INFO] Extraindo Node.js...
+echo.
+echo [INFO] Extraindo Node.js em !NODE_DEST! ...
 if not exist "!NODE_DEST!" mkdir "!NODE_DEST!"
-powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; Expand-Archive -Path '!NODE_ZIP!' -DestinationPath '!NODE_DEST!' -Force"
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference='SilentlyContinue'; Expand-Archive -Path '!NODE_ZIP!' -DestinationPath '!NODE_DEST!' -Force"
 del "!NODE_ZIP!" >nul 2>&1
 
-if not exist "!NODE_EXE!" (
+if not exist "!NODE_DEST!\node-v20.19.2-win-x64\node.exe" (
+    echo.
     echo [ERRO] Falha ao extrair o Node.js.
-    echo        Instale manualmente em: https://nodejs.org/pt/download
+    echo        Tente instalar manualmente em: https://nodejs.org/pt/download
+    echo.
     pause
     exit /b 1
 )
 
 set "PATH=!NODE_DEST!\node-v20.19.2-win-x64;!PATH!"
-echo [OK] Node.js instalado com sucesso!
+echo [OK] Node.js instalado com sucesso.
 
 :node_ok
 echo.
+echo [INFO] Versao do Node.js:
 node --version
+echo [INFO] Versao do npm:
 npm --version
 echo.
 
@@ -100,25 +110,39 @@ if exist "%~dp0Atv_Pendentes_Abril.xlsx" (
 )
 
 :: ====== DEPENDENCIAS BACKEND ======
+echo [INFO] Verificando dependencias do backend...
 if not exist "%~dp0backend\node_modules" (
-    echo [INFO] Instalando dependencias do backend...
+    echo [INFO] Instalando dependencias do backend (aguarde)...
     pushd "%~dp0backend"
     call npm install
-    if errorlevel 1 ( popd & echo [ERRO] Falha no backend. & pause & exit /b 1 )
+    set "ERR=!errorlevel!"
     popd
-    echo [OK] Backend instalado.
+    if "!ERR!" NEQ "0" (
+        echo.
+        echo [ERRO] Falha ao instalar dependencias do backend.
+        pause
+        exit /b 1
+    )
+    echo [OK] Dependencias do backend instaladas.
 ) else (
     echo [OK] Backend: dependencias OK.
 )
 
 :: ====== DEPENDENCIAS FRONTEND ======
+echo [INFO] Verificando dependencias do frontend...
 if not exist "%~dp0frontend\node_modules" (
-    echo [INFO] Instalando dependencias do frontend...
+    echo [INFO] Instalando dependencias do frontend (aguarde)...
     pushd "%~dp0frontend"
     call npm install
-    if errorlevel 1 ( popd & echo [ERRO] Falha no frontend. & pause & exit /b 1 )
+    set "ERR=!errorlevel!"
     popd
-    echo [OK] Frontend instalado.
+    if "!ERR!" NEQ "0" (
+        echo.
+        echo [ERRO] Falha ao instalar dependencias do frontend.
+        pause
+        exit /b 1
+    )
+    echo [OK] Dependencias do frontend instaladas.
 ) else (
     echo [OK] Frontend: dependencias OK.
 )
@@ -132,6 +156,7 @@ if not exist "%~dp0backend\.env" (
         echo ASSETS_DIR=../assets
         echo TEMP_DIR=../temp
     ) > "%~dp0backend\.env"
+    echo [OK] .env criado.
 )
 
 :: ====== LIBERAR PORTAS ======
@@ -142,26 +167,41 @@ for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":3000 "') do taskkill
 timeout /t 1 /nobreak >nul
 
 :: ====== INICIAR BACKEND ======
-echo [INFO] Iniciando backend...
+echo [INFO] Iniciando backend na porta 3001...
 pushd "%~dp0backend"
-start /B npm run dev >nul 2>nul
+start /B npm run dev
 popd
-echo [INFO] Aguardando backend (7s)...
-timeout /t 7 /nobreak >nul
+echo [INFO] Aguardando backend (10s)...
+timeout /t 10 /nobreak >nul
 
 :: ====== INICIAR FRONTEND ======
-echo [INFO] Iniciando frontend...
+echo [INFO] Iniciando frontend na porta 3000...
 pushd "%~dp0frontend"
-start /B npm run dev >nul 2>nul
+start /B npm run dev
 popd
-echo [INFO] Aguardando frontend (8s)...
-timeout /t 8 /nobreak >nul
+echo [INFO] Aguardando frontend (10s)...
+timeout /t 10 /nobreak >nul
 
-:: ====== VERIFICAR PORTAS ======
+:: ====== VERIFICAR SE SUBIRAM ======
+echo.
 netstat -aon 2>nul | findstr ":3001 " >nul
-if errorlevel 1 echo [AVISO] Backend pode nao ter iniciado corretamente.
+if errorlevel 1 (
+    echo [AVISO] Backend nao respondeu na porta 3001.
+    echo         Verifique os logs acima para identificar o erro.
+    echo.
+    pause
+    goto :menu
+)
+echo [OK] Backend rodando na porta 3001.
+
 netstat -aon 2>nul | findstr ":3000 " >nul
-if errorlevel 1 echo [AVISO] Frontend pode nao ter iniciado corretamente.
+if errorlevel 1 (
+    echo [AVISO] Frontend nao respondeu na porta 3000.
+    echo         Verifique os logs acima para identificar o erro.
+    echo.
+    pause
+)
+echo [OK] Frontend rodando na porta 3000.
 
 :: ====== ABRIR NAVEGADOR ======
 echo [INFO] Abrindo navegador...
@@ -169,7 +209,6 @@ rundll32 url.dll,FileProtocolHandler http://localhost:3000
 
 :: ====== MENU DE CONTROLE ======
 :menu
-cls
 echo.
 echo =====================================================
 echo   [OK] PORTAL DE PENDENCIAS RODANDO
