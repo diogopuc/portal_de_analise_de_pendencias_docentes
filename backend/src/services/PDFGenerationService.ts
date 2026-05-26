@@ -123,12 +123,19 @@ export class PDFGenerationService {
     // =========================================================
     // SEMANAS
     // =========================================================
+    const mapearStatus = (status: string) =>
+      status === 'FINALIZADO' ? 'NECESSÁRIO CRIAR NOVO TACH' : status;
+
     for (const config of SEMANAS_CONFIG) {
       const semana = docente.semanas.find(s => s.aba === config.aba);
       if (!semana) continue;
 
+      // Omite a semana inteira se não há nenhuma pendência nela
+      if (!semana.pendenciaAgenda && !semana.pendenciaTach) continue;
+
       // Estima altura mínima para o bloco desta semana
-      const estimativa = 32 + 18 + 28 + 10 + (semana.statusPorDia.length * 14) + 60;
+      const linhasTach = semana.pendenciaTach ? semana.statusPorDia.length : 0;
+      const estimativa = 32 + (semana.pendenciaAgenda ? 28 + 10 : 0) + (semana.pendenciaTach ? 14 + linhasTach * 14 : 0) + 40;
       if (y < estimativa + 50) {
         page = pdfDoc.addPage(PageSizes.A4);
         y = height - 40;
@@ -142,25 +149,17 @@ export class PDFGenerationService {
       });
       y -= TITLE_H + 8;
 
-      // --- CH Contrato ---
-      page.drawText('CH Contrato:', { x: marginX + 8, y: y - 4, size: 9, font: fontBold, color: GRAY });
-      page.drawText(`${semana.chContrato}h`, { x: marginX + 130, y: y - 4, size: 9, font: fontRegular, color: DARK });
-      y -= 20;
+      // --- Horas Pendentes de Alocação (apenas se há pendência de agenda) ---
+      if (semana.pendenciaAgenda) {
+        const HORAS_H = 24;
+        page.drawRectangle(rr({ x: marginX, y: y - HORAS_H, width: contentW, height: HORAS_H, color: rgb(1, 0.91, 0.91), borderColor: WARNING_COLOR, borderWidth: 1, borderRadius: 4 }));
+        page.drawText('Horas Pendentes de Alocação:', { x: marginX + 8, y: y - HORAS_H + 7, size: 9, font: fontBold, color: WARNING_COLOR });
+        page.drawText(`${semana.horasAlocar.toFixed(1)}h  (PENDÊNCIA)`, { x: marginX + 195, y: y - HORAS_H + 7, size: 9, font: fontBold, color: WARNING_COLOR });
+        y -= HORAS_H + 12;
+      }
 
-      // --- Horas Pendentes de Alocação (destaque) ---
-      const corHoras = semana.pendenciaAgenda ? WARNING_COLOR : SUCCESS;
-      const bgHoras = semana.pendenciaAgenda ? rgb(1, 0.91, 0.91) : rgb(0.91, 1, 0.91);
-      const HORAS_H = 24;
-      page.drawRectangle(rr({ x: marginX, y: y - HORAS_H, width: contentW, height: HORAS_H, color: bgHoras, borderColor: corHoras, borderWidth: 1, borderRadius: 4 }));
-      page.drawText('Horas Pendentes de Alocação:', { x: marginX + 8, y: y - HORAS_H + 7, size: 9, font: fontBold, color: corHoras });
-      page.drawText(
-        `${semana.horasAlocar.toFixed(1)}h  ${semana.pendenciaAgenda ? '(PENDÊNCIA)' : '(OK)'}`,
-        { x: marginX + 195, y: y - HORAS_H + 7, size: 9, font: fontBold, color: corHoras }
-      );
-      y -= HORAS_H + 12;
-
-      // --- Status por dia ---
-      if (semana.statusPorDia.length > 0) {
+      // --- Status por dia (apenas se há pendência de TACH) ---
+      if (semana.pendenciaTach && semana.statusPorDia.length > 0) {
         page.drawText('Status por dia:', { x: marginX + 8, y, size: 8.5, font: fontBold, color: GRAY });
         y -= 14;
 
@@ -170,18 +169,19 @@ export class PDFGenerationService {
             page = pdfDoc.addPage(PageSizes.A4);
             y = height - 40;
           }
+          const statusExibido = mapearStatus(sp.status);
           const isAprovado = sp.status === 'APROVADO';
           const corStatus = isAprovado ? SUCCESS : STATUS_TACH_COM_PENDENCIA.includes(sp.status) ? WARNING_COLOR : ORANGE;
           page.drawRectangle(rr({ x: marginX + 10, y: y - 3, width: 7, height: 7, color: corStatus, borderRadius: 1 }));
           page.drawText(`${sp.data}:`, { x: marginX + 22, y, size: 8, font: fontBold, color: GRAY });
-          page.drawText(sp.status, { x: marginX + 120, y, size: 8, font: fontRegular, color: corStatus });
+          page.drawText(statusExibido, { x: marginX + 120, y, size: 8, font: fontRegular, color: corStatus });
           y -= 13;
         }
       }
 
       y -= 6;
 
-      // --- Resultados ---
+      // --- Resultados (apenas a pendência presente) ---
       const RES_H = 20;
       const drawResultado = (label: string, valor: string, pendencia: boolean) => {
         const cor = pendencia ? WARNING_COLOR : SUCCESS;
@@ -191,8 +191,8 @@ export class PDFGenerationService {
         y -= RES_H + 4;
       };
 
-      drawResultado('Agenda', semana.resultadoAgenda, semana.pendenciaAgenda);
-      drawResultado('TACH', semana.resultadoTach, semana.pendenciaTach);
+      if (semana.pendenciaAgenda) drawResultado('Agenda', semana.resultadoAgenda, true);
+      if (semana.pendenciaTach) drawResultado('TACH', semana.resultadoTach, true);
       y -= 14;
     }
 
