@@ -6,7 +6,6 @@ import { Docente, SEMANAS_CONFIG, STATUS_TACH_COM_PENDENCIA } from '../types';
 const PRIMARY = rgb(138 / 255, 5 / 255, 56 / 255);
 const DARK = rgb(30 / 255, 30 / 255, 30 / 255);
 const GRAY = rgb(120 / 255, 120 / 255, 120 / 255);
-const LIGHT_BG = rgb(248 / 255, 248 / 255, 248 / 255);
 const WHITE = rgb(1, 1, 1);
 const SUCCESS = rgb(75 / 255, 178 / 255, 24 / 255);
 const WARNING_COLOR = rgb(229 / 255, 0 / 255, 12 / 255);
@@ -105,19 +104,23 @@ export class PDFGenerationService {
     y -= 18;
 
     // =========================================================
-    // RESUMO PENDÊNCIAS
+    // RESUMO PENDÊNCIAS — exibe apenas as pendências presentes
     // =========================================================
-    const boxW = (contentW - 16) / 2;
     const BOX_H = 44;
+    const boxesAtivos: { label: string }[] = [];
+    if (docente.pendenciaAgenda) boxesAtivos.push({ label: 'PENDÊNCIA DE AGENDA' });
+    if (docente.pendenciaTach)   boxesAtivos.push({ label: 'PENDÊNCIA DE TACH' });
 
-    const drawResumoBox = (bx: number, label: string, valor: string, cor: typeof PRIMARY) => {
-      page.drawRectangle(rr({ x: bx, y: y - BOX_H, width: boxW, height: BOX_H, color: LIGHT_BG, borderColor: cor, borderWidth: 1.5, borderRadius: 6 }));
+    const boxWDinamico = boxesAtivos.length === 1 ? contentW : (contentW - 16) / 2;
+    const drawResumoBox = (bx: number, bw: number, label: string) => {
+      page.drawRectangle(rr({ x: bx, y: y - BOX_H, width: bw, height: BOX_H, color: rgb(1, 0.94, 0.94), borderColor: WARNING_COLOR, borderWidth: 1.5, borderRadius: 6 }));
       page.drawText(label, { x: bx + 10, y: y - 14, size: 7.5, font: fontRegular, color: GRAY });
-      page.drawText(valor, { x: bx + 10, y: y - 32, size: 13, font: fontBold, color: cor });
+      page.drawText('SIM', { x: bx + 10, y: y - 32, size: 13, font: fontBold, color: WARNING_COLOR });
     };
 
-    drawResumoBox(marginX, 'PENDÊNCIA DE AGENDA', docente.pendenciaAgenda ? 'SIM' : 'NÃO', docente.pendenciaAgenda ? WARNING_COLOR : SUCCESS);
-    drawResumoBox(marginX + boxW + 16, 'PENDÊNCIA DE TACH', docente.pendenciaTach ? 'SIM' : 'NÃO', docente.pendenciaTach ? WARNING_COLOR : SUCCESS);
+    boxesAtivos.forEach((box, i) => {
+      drawResumoBox(marginX + i * (boxWDinamico + 16), boxWDinamico, box.label);
+    });
     y -= BOX_H + 16;
 
     // =========================================================
