@@ -108,8 +108,8 @@ export class PDFGenerationService {
     // =========================================================
     const BOX_H = 44;
     const boxesAtivos: { label: string }[] = [];
-    if (docente.pendenciaAgenda) boxesAtivos.push({ label: 'PENDÊNCIA DE AGENDA' });
     if (docente.pendenciaTach)   boxesAtivos.push({ label: 'PENDÊNCIA DE TACH' });
+    if (docente.pendenciaAgenda) boxesAtivos.push({ label: 'PENDÊNCIA DE AGENDA' });
 
     const boxWDinamico = boxesAtivos.length === 1 ? 190 : (contentW - 16) / 2;
     const drawResumoBox = (bx: number, bw: number, label: string) => {
@@ -173,8 +173,12 @@ export class PDFGenerationService {
         y -= HORAS_H + 12;
       }
 
+      // --- Resultado de TACH (antes do status por dia, sem prefixo "TACH:") ---
+      if (semana.pendenciaTach) drawResultado(semana.resultadoTach);
+
       // --- Status por dia (apenas se há pendência de TACH) ---
       if (semana.pendenciaTach && semana.statusPorDia.length > 0) {
+        y -= 8;
         page.drawText('Status por dia:', { x: marginX + 8, y, size: 8.5, font: fontBold, color: GRAY });
         y -= 14;
 
@@ -195,9 +199,6 @@ export class PDFGenerationService {
       }
 
       y -= 6;
-
-      // --- Resultado de TACH (após status por dia) ---
-      if (semana.pendenciaTach) drawResultado(`TACH: ${semana.resultadoTach}`);
       y -= 14;
     }
 
