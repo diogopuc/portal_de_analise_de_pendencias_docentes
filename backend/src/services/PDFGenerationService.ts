@@ -56,35 +56,48 @@ export class PDFGenerationService {
     // =========================================================
     // CABEÇALHO
     // =========================================================
-    page.drawRectangle({ x: 0, y: height - 100, width, height: 100, color: PRIMARY });
+    const HEADER_H = 110;
+    page.drawRectangle({ x: 0, y: height - HEADER_H, width, height: HEADER_H, color: PRIMARY });
+
+    const headerCenterY = height - HEADER_H / 2;
+    let textStartX = marginX;
 
     const logoPath = path.join(this.assetsDir, 'logoPUCPRBranca.png');
     if (fs.existsSync(logoPath)) {
       try {
         const logoBytes = fs.readFileSync(logoPath);
         const logoImg = await pdfDoc.embedPng(logoBytes);
-        const logoScale = Math.min(110 / logoImg.width, 50 / logoImg.height);
+        const logoScale = Math.min(120 / logoImg.width, 70 / logoImg.height);
+        const logoW = logoImg.width * logoScale;
+        const logoH = logoImg.height * logoScale;
         page.drawImage(logoImg, {
           x: marginX,
-          y: height - 85,
-          width: logoImg.width * logoScale,
-          height: logoImg.height * logoScale,
+          y: headerCenterY - logoH / 2,
+          width: logoW,
+          height: logoH,
         });
+        textStartX = marginX + logoW + 22;
       } catch (_) {}
     }
 
-    page.drawText('PONTIFÍCIA UNIVERSIDADE CATÓLICA DO PARANÁ', {
-      x: marginX + 140, y: height - 48, size: 11, font: fontBold, color: WHITE,
+    const titleText    = 'PONTIFÍCIA UNIVERSIDADE CATÓLICA DO PARANÁ';
+    const subtitleText = 'Portal de Análise de Pendências Docentes';
+    const remainingW   = width - marginX - textStartX;
+    const titleX    = textStartX + (remainingW - fontBold.widthOfTextAtSize(titleText, 11)) / 2;
+    const subtitleX = textStartX + (remainingW - fontRegular.widthOfTextAtSize(subtitleText, 9)) / 2;
+
+    page.drawText(titleText, {
+      x: titleX, y: headerCenterY + 8, size: 11, font: fontBold, color: WHITE,
     });
-    page.drawText('Portal de Análise de Pendências Docentes', {
-      x: marginX + 140, y: height - 68, size: 9, font: fontRegular,
+    page.drawText(subtitleText, {
+      x: subtitleX, y: headerCenterY - 10, size: 9, font: fontRegular,
       color: rgb(220 / 255, 180 / 255, 200 / 255),
     });
 
     // =========================================================
     // SAUDAÇÃO
     // =========================================================
-    y = height - 120;
+    y = height - HEADER_H - 20;
     const mesNome = nomeMes(docente.semanas[0]?.aba || '01.04');
 
     page.drawText(`Olá, Prof(a). ${docente.nomeDocente}.`, {
