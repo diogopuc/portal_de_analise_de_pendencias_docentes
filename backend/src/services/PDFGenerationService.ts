@@ -111,7 +111,7 @@ export class PDFGenerationService {
     if (docente.pendenciaAgenda) boxesAtivos.push({ label: 'PENDÊNCIA DE AGENDA' });
     if (docente.pendenciaTach)   boxesAtivos.push({ label: 'PENDÊNCIA DE TACH' });
 
-    const boxWDinamico = (contentW - 16) / 2;
+    const boxWDinamico = boxesAtivos.length === 1 ? 190 : (contentW - 16) / 2;
     const drawResumoBox = (bx: number, bw: number, label: string) => {
       page.drawRectangle(rr({ x: bx, y: y - BOX_H, width: bw, height: BOX_H, color: rgb(1, 0.94, 0.94), borderColor: WARNING_COLOR, borderWidth: 1.5, borderRadius: 6 }));
       page.drawText(label, { x: bx + 10, y: y - 14, size: 7.5, font: fontRegular, color: GRAY });
@@ -152,7 +152,19 @@ export class PDFGenerationService {
       });
       y -= TITLE_H + 8;
 
-      // --- Horas Pendentes de Alocação (apenas se há pendência de agenda) ---
+      // --- Helper de resultado (sempre vermelho — só chamado quando há pendência) ---
+      const RES_H = 20;
+      const drawResultado = (texto: string) => {
+        if (y < 70) { page = pdfDoc.addPage(PageSizes.A4); y = height - 40; }
+        page.drawRectangle(rr({ x: marginX, y: y - RES_H, width: contentW, height: RES_H, color: rgb(1, 0.94, 0.94), borderColor: WARNING_COLOR, borderWidth: 0.5, borderRadius: 3 }));
+        page.drawText(texto, { x: marginX + 8, y: y - RES_H + 6, size: 8, font: fontBold, color: WARNING_COLOR });
+        y -= RES_H + 4;
+      };
+
+      // --- Resultado de Agenda (antes das horas, sem prefixo "Agenda:") ---
+      if (semana.pendenciaAgenda) drawResultado(semana.resultadoAgenda);
+
+      // --- Horas Pendentes de Alocação ---
       if (semana.pendenciaAgenda) {
         const HORAS_H = 24;
         page.drawRectangle(rr({ x: marginX, y: y - HORAS_H, width: contentW, height: HORAS_H, color: rgb(1, 0.91, 0.91), borderColor: WARNING_COLOR, borderWidth: 1, borderRadius: 4 }));
@@ -184,18 +196,8 @@ export class PDFGenerationService {
 
       y -= 6;
 
-      // --- Resultados (apenas a pendência presente) ---
-      const RES_H = 20;
-      const drawResultado = (label: string, valor: string, pendencia: boolean) => {
-        const cor = pendencia ? WARNING_COLOR : SUCCESS;
-        const bg = pendencia ? rgb(1, 0.94, 0.94) : rgb(0.94, 1, 0.94);
-        page.drawRectangle(rr({ x: marginX, y: y - RES_H, width: contentW, height: RES_H, color: bg, borderColor: cor, borderWidth: 0.5, borderRadius: 3 }));
-        page.drawText(`${label}: ${valor}`, { x: marginX + 8, y: y - RES_H + 6, size: 8, font: fontBold, color: cor });
-        y -= RES_H + 4;
-      };
-
-      if (semana.pendenciaAgenda) drawResultado('Agenda', semana.resultadoAgenda, true);
-      if (semana.pendenciaTach) drawResultado('TACH', semana.resultadoTach, true);
+      // --- Resultado de TACH (após status por dia) ---
+      if (semana.pendenciaTach) drawResultado(`TACH: ${semana.resultadoTach}`);
       y -= 14;
     }
 
