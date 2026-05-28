@@ -111,7 +111,7 @@ export class PDFGenerationService {
     if (docente.pendenciaAgenda) boxesAtivos.push({ label: 'PENDÊNCIA DE AGENDA' });
     if (docente.pendenciaTach)   boxesAtivos.push({ label: 'PENDÊNCIA DE TACH' });
 
-    const boxWDinamico = boxesAtivos.length === 1 ? contentW : (contentW - 16) / 2;
+    const boxWDinamico = (contentW - 16) / 2;
     const drawResumoBox = (bx: number, bw: number, label: string) => {
       page.drawRectangle(rr({ x: bx, y: y - BOX_H, width: bw, height: BOX_H, color: rgb(1, 0.94, 0.94), borderColor: WARNING_COLOR, borderWidth: 1.5, borderRadius: 6 }));
       page.drawText(label, { x: bx + 10, y: y - 14, size: 7.5, font: fontRegular, color: GRAY });
