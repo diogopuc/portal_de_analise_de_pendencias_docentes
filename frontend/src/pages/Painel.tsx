@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  PieChart, Pie,
 } from 'recharts';
-import { Users, AlertTriangle, Clock, RefreshCw } from 'lucide-react';
+import { Users, AlertTriangle, Clock, RefreshCw, CheckCircle } from 'lucide-react';
 import { dashboardAPI } from '../services/api';
 import { StatCard, Card } from '../components/ui/Card';
 import { SkeletonCard } from '../components/ui/Skeleton';
@@ -77,6 +77,7 @@ export function Painel() {
         <StatCard titulo="Pendência de Agenda" valor={data.totalPendenciaAgenda} subtitulo="docentes com horas a alocar" icon={<AlertTriangle size={20} />} cor="#E5000C" />
         <StatCard titulo="Pendência de TACH" valor={data.totalPendenciaTach} subtitulo="docentes com pendencia no TACH" icon={<Clock size={20} />} cor="#FAAD14" />
         <StatCard titulo="Pendência Simultânea" valor={data.totalSimultaneo} subtitulo="agenda + TACH" icon={<AlertTriangle size={20} />} cor="#8C0E28" destaque />
+        <StatCard titulo="Sem Pendência" valor={data.semPendencia} subtitulo="docentes em dia" icon={<CheckCircle size={20} />} cor="#4BB218" />
       </div>
 
       {/* Gráficos linha 1 */}
@@ -108,9 +109,10 @@ export function Painel() {
             <PieChart>
               <Pie
                 data={[
-                  { name: 'Somente Agenda', value: data.totalPendenciaAgenda - data.totalSimultaneo },
-                  { name: 'Somente TACH', value: data.totalPendenciaTach - data.totalSimultaneo },
-                  { name: 'Simultânea', value: data.totalSimultaneo },
+                  { name: 'Somente Agenda', value: data.totalPendenciaAgenda - data.totalSimultaneo, fill: '#E5000C' },
+                  { name: 'Somente TACH',   value: data.totalPendenciaTach - data.totalSimultaneo,   fill: '#FAAD14' },
+                  { name: 'Simultânea',     value: data.totalSimultaneo,                             fill: '#8A0538' },
+                  { name: 'Sem Pendência',  value: data.semPendencia,                                fill: '#4BB218' },
                 ].filter(d => d.value > 0)}
                 cx="50%"
                 cy="50%"
@@ -120,11 +122,7 @@ export function Painel() {
                 dataKey="value"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 labelLine={true}
-              >
-                <Cell fill="#E5000C" />
-                <Cell fill="#FAAD14" />
-                <Cell fill="#8A0538" />
-              </Pie>
+              />
               <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
