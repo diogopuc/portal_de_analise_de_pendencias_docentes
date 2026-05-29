@@ -5,6 +5,7 @@ import {
   DadosSemana,
   Docente,
   SEMANAS_CONFIG,
+  SEMANAS_ABONADAS,
   STATUS_TACH_COM_PENDENCIA,
 } from '../types';
 
@@ -94,8 +95,9 @@ export class ExcelReaderService {
           status: this.normalizarStatus(String(row[cs.idx] || '')),
         })).filter(s => s.status !== '');
 
-        const pendenciaAgenda = this.temPendenciaAgenda(chContrato, horasAlocar);
-        const pendenciaTach = this.temPendenciaTach(statusPorDia);
+        const abonada = config.aba in SEMANAS_ABONADAS;
+        const pendenciaAgenda = abonada ? false : this.temPendenciaAgenda(chContrato, horasAlocar);
+        const pendenciaTach   = abonada ? false : this.temPendenciaTach(statusPorDia);
 
         const dadosSemana: DadosSemana = {
           semana: config.semana,
@@ -112,6 +114,8 @@ export class ExcelReaderService {
           resultadoTach: pendenciaTach ? 'Pendência de TACH' : 'Sem Pendência de TACH',
           pendenciaAgenda,
           pendenciaTach,
+          abonada,
+          motivoAbono: abonada ? SEMANAS_ABONADAS[config.aba] : undefined,
         };
 
         if (docentesMap.has(matricula)) {

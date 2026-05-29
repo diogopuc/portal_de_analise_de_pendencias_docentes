@@ -13,6 +13,8 @@ export interface DadosSemana {
   resultadoTach: string;
   pendenciaAgenda: boolean;
   pendenciaTach: boolean;
+  abonada?: boolean;
+  motivoAbono?: string;
 }
 
 export interface Docente {
@@ -83,3 +85,8 @@ export const STATUS_TACH_COM_PENDENCIA = [
 ];
 
 export const STATUS_TACH_SEM_PENDENCIA = ['APROVADO'];
+
+export const SEMANAS_ABONADAS: Record<string, string> = {
+  '01.04': 'Semana abonada — Feriado: Quinta-Feira Santa (02/04) e Sexta-Feira da Paixão (03/04)',
+  '20.04': 'Semana abonada — Feriado: Tiradentes (21/04)',
+};
