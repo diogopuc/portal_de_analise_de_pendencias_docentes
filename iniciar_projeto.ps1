@@ -14,6 +14,31 @@ Write-Host "  Grupo Marista - GPCA"                               -ForegroundCol
 Write-Host "=====================================================" -ForegroundColor DarkRed
 Write-Host ""
 
+# ── HELPER: aguarda porta abrir (polling) ─────────────────────
+function Wait-Port {
+    param([int]$Port, [string]$Nome, [int]$TimeoutSec = 60, [string]$LogPath = "")
+    Write-Host "  [INFO] Aguardando $Nome na porta $Port..." -ForegroundColor Gray
+    $inicio = Get-Date
+    while (((Get-Date) - $inicio).TotalSeconds -lt $TimeoutSec) {
+        try {
+            $tcp = New-Object System.Net.Sockets.TcpClient
+            $tcp.Connect("127.0.0.1", $Port)
+            $tcp.Close()
+            return $true
+        } catch {
+            Start-Sleep -Milliseconds 500
+            Write-Host "." -NoNewline -ForegroundColor DarkGray
+        }
+    }
+    Write-Host ""
+    Write-Host "  [ERRO] $Nome nao respondeu em ${TimeoutSec}s." -ForegroundColor Red
+    if ($LogPath -and (Test-Path $LogPath)) {
+        Write-Host "  Ultimas linhas do log:" -ForegroundColor Yellow
+        Get-Content $LogPath -Tail 15 | ForEach-Object { Write-Host "    $_" -ForegroundColor Gray }
+    }
+    return $false
+}
+
 # ── [1] NODE.JS ──────────────────────────────────────────────
 Write-Host "[1/5] Verificando Node.js..." -ForegroundColor Cyan
 if ((Test-Path "$nodeDir\node.exe") -and ($env:PATH -notlike "*$nodeDir*")) {
@@ -74,16 +99,21 @@ foreach ($port in @(3000, 3001)) {
         Select-Object -ExpandProperty OwningProcess -Unique |
         ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
 }
-Start-Sleep -Seconds 1
+Start-Sleep -Milliseconds 800
 Write-Host "  [OK]" -ForegroundColor Green
 
-# ── [5] INICIAR SERVICOS (sem abrir novas janelas) ───────────
-Write-Host "[5/5] Iniciando servicos em background..." -ForegroundColor Cyan
+# ── [5] INICIAR SERVICOS ─────────────────────────────────────
+Write-Host "[5/5] Iniciando servicos..." -ForegroundColor Cyan
 
 $bLog = Join-Path $logDir "backend.log"
 $fLog = Join-Path $logDir "frontend.log"
 
-# Backend — NoNewWindow, output no log
+# Limpa logs anteriores para facilitar leitura de erros
+"" | Set-Content $bLog -ErrorAction SilentlyContinue
+"" | Set-Content "$bLog.err" -ErrorAction SilentlyContinue
+"" | Set-Content $fLog -ErrorAction SilentlyContinue
+
+# Backend
 $bProc = Start-Process -FilePath "cmd.exe" `
     -ArgumentList "/c", "npm run dev" `
     -WorkingDirectory $backendDir `
@@ -92,10 +122,15 @@ $bProc = Start-Process -FilePath "cmd.exe" `
     -RedirectStandardError  "$bLog.err" `
     -PassThru
 
-Write-Host "  [INFO] Aguardando backend (8s)..." -ForegroundColor Gray
-Start-Sleep -Seconds 8
+if (-not (Wait-Port 3001 "Backend" 60 "$bLog.err")) {
+    Write-Host ""
+    Write-Host "  [ERRO] Backend falhou. Verifique: $bLog.err" -ForegroundColor Red
+    Read-Host "Enter para fechar"; exit 1
+}
+Write-Host ""
+Write-Host "  [OK] Backend ativo em :3001" -ForegroundColor Green
 
-# Frontend — NoNewWindow, output no log
+# Frontend
 $fProc = Start-Process -FilePath "cmd.exe" `
     -ArgumentList "/c", "npm run dev" `
     -WorkingDirectory $frontendDir `
@@ -104,10 +139,14 @@ $fProc = Start-Process -FilePath "cmd.exe" `
     -RedirectStandardError  "$fLog.err" `
     -PassThru
 
-Write-Host "  [INFO] Aguardando frontend (10s)..." -ForegroundColor Gray
-Start-Sleep -Seconds 10
-
-Write-Host "  [OK] Sistema iniciado!" -ForegroundColor Green
+if (-not (Wait-Port 3000 "Frontend" 60 "$fLog.err")) {
+    Write-Host ""
+    Write-Host "  [ERRO] Frontend falhou. Verifique: $fLog.err" -ForegroundColor Red
+    Read-Host "Enter para fechar"; exit 1
+}
+Write-Host ""
+Write-Host "  [OK] Frontend ativo em :3000" -ForegroundColor Green
+Write-Host ""
 Write-Host "  Logs: data\logs\backend.log  /  data\logs\frontend.log" -ForegroundColor Gray
 Start-Process "http://localhost:3000"
 
