@@ -187,7 +187,7 @@ export class PDFGenerationService {
         y -= 14;
 
         for (const sp of semana.statusPorDia) {
-          if (!sp.status) continue;
+          if (!sp.status || sp.status === 'APROVADO') continue;
           if (y < 70) {
             page = pdfDoc.addPage(PageSizes.A4);
             y = height - 40;
