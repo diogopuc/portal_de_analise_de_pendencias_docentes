@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea,
   PieChart, Pie,
 } from 'recharts';
 import { Users, AlertTriangle, Clock, RefreshCw, CheckCircle } from 'lucide-react';
@@ -87,15 +87,36 @@ export function Painel() {
           <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
             PROGRESSO POR SEMANA
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={data.porSemana} barCategoryGap="30%">
               <CartesianGrid strokeDasharray="3 3" stroke="#E4E4E4" vertical={false} />
-              <XAxis dataKey="semana" tick={{ fontSize: 11, fill: '#787878' }} />
+              <XAxis dataKey="semana" tick={(props: any) => {
+                const item = data.porSemana.find(s => s.semana === props.payload.value);
+                return (
+                  <g transform={`translate(${props.x},${props.y})`}>
+                    <text x={0} y={0} dy={14} textAnchor="middle" fill="#787878" fontSize={11}>{props.payload.value}</text>
+                    {item?.abonada && (
+                      <text x={0} y={0} dy={26} textAnchor="middle" fill="#FAAD14" fontSize={9} fontWeight="bold">Feriado</text>
+                    )}
+                  </g>
+                );
+              }} height={44} />
               <YAxis tick={{ fontSize: 11, fill: '#787878' }} />
-              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
+              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(value, name, props) => {
+                if (props.payload?.abonada) return ['—', name as string];
+                return [value, name as string];
+              }} labelFormatter={(label) => {
+                const item = data.porSemana.find(s => s.semana === label);
+                if (item?.abonada) return `${label} — ${item.motivoAbono}`;
+                return label;
+              }} />
               <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="pendenciaAgenda" name="Agenda" fill="#E5000C" radius={[4, 4, 0, 0]} />
               <Bar dataKey="pendenciaTach" name="TACH" fill="#FAAD14" radius={[4, 4, 0, 0]} />
+              {data.porSemana.filter(s => s.abonada).map(s => (
+                <ReferenceArea key={s.aba} x1={s.semana} x2={s.semana} fill="#F0F0F0" stroke="#DADADA" strokeOpacity={0.5}
+                  label={{ value: 'Feriado', position: 'insideTop', fill: '#ADADAD', fontSize: 10, fontWeight: 'bold' }} />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </Card>

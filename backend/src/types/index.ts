@@ -34,7 +34,7 @@ export interface DashboardData {
   totalPendenciaTach: number;
   totalSimultaneo: number;
   semPendencia: number;
-  porSemana: { semana: string; aba: string; pendenciaAgenda: number; pendenciaTach: number; total: number }[];
+  porSemana: { semana: string; aba: string; pendenciaAgenda: number; pendenciaTach: number; total: number; abonada?: boolean; motivoAbono?: string }[];
   porCampus: { campus: string; total: number }[];
   statusTachDistribuicao: { status: string; total: number }[];
   ultimaAtualizacao: string;

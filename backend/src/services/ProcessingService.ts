@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { Docente, DashboardData, LogEntry, ProcessingStatus, SEMANAS_CONFIG } from '../types';
+import { Docente, DashboardData, LogEntry, ProcessingStatus, SEMANAS_CONFIG, SEMANAS_ABONADAS } from '../types';
 import { ExcelReaderService } from './ExcelReaderService';
 
 export class ProcessingService {
@@ -89,12 +89,15 @@ export class ProcessingService {
       const pTach = docentesSemana.filter(d =>
         d.semanas.find(s => s.aba === config.aba)?.pendenciaTach
       ).length;
+      const abonada = config.aba in SEMANAS_ABONADAS;
       return {
         semana: config.semana,
         aba: config.aba,
         pendenciaAgenda: pAgenda,
         pendenciaTach: pTach,
         total: docentesSemana.length,
+        abonada,
+        motivoAbono: abonada ? SEMANAS_ABONADAS[config.aba] : undefined,
       };
     });
 
