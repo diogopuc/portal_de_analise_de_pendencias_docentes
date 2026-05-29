@@ -38,4 +38,7 @@ export const relatoriosAPI = {
   getDownloadUrl: (nomeArquivo: string) => `/api/relatorios/download/${nomeArquivo}`,
   getVisualizarUrl: (nomeArquivo: string) => `/api/relatorios/visualizar/${nomeArquivo}`,
   getZipUrl: () => `/api/relatorios/download-zip/todos`,
+  getZipSimultaneasUrl:   () => `/api/relatorios/download-zip/simultaneas`,
+  getZipSomenteAgendaUrl: () => `/api/relatorios/download-zip/somente-agenda`,
+  getZipSomenteTachUrl:   () => `/api/relatorios/download-zip/somente-tach`,
 };

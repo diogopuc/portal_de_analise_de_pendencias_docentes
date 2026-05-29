@@ -200,12 +200,58 @@ export function relatoriosRoutes(
   //   4. Faz pipe do stream diretamente para a resposta HTTP (sem gravar em disco)
   // ---------------------------------------------------------------------------
   router.get('/download-zip/todos', async (req: Request, res: Response) => {
-    const relatoriosDir = path.join(dataDir, 'relatorios');
     const pdfs = pdfService.listarPDFs();
     if (pdfs.length === 0) return res.status(404).json({ erro: 'Nenhum PDF disponível' });
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename="relatorios_pendencias.zip"');
+
+    const archive = archiver('zip', { zlib: { level: 6 } });
+    archive.pipe(res);
+    pdfs.forEach(pdf => archive.file(pdf.caminho, { name: pdf.nomeArquivo }));
+    await archive.finalize();
+  });
+
+  // ---------------------------------------------------------------------------
+  // GET /download-zip/:tipo
+  //
+  // Compacta apenas os PDFs de docentes de um tipo específico de pendência:
+  //   - simultaneas      → tipoPendencia = 'simultanea'
+  //   - somente-agenda   → tipoPendencia = 'somente_agenda'
+  //   - somente-tach     → tipoPendencia = 'somente_tach'
+  // ---------------------------------------------------------------------------
+  const TIPOS_ZIP: Record<string, { tipo: string; nomeZip: string }> = {
+    'simultaneas':    { tipo: 'simultanea',    nomeZip: 'pendencias_simultaneas.zip' },
+    'somente-agenda': { tipo: 'somente_agenda', nomeZip: 'pendencias_somente_agenda.zip' },
+    'somente-tach':   { tipo: 'somente_tach',   nomeZip: 'pendencias_somente_tach.zip' },
+  };
+
+  const sanitizarNome = (nome: string) =>
+    nome.toUpperCase().replace(/\s+/g, '_').normalize('NFD')
+      .replace(/[̀-ͯ]/g, '').replace(/[^A-Z0-9_]/g, '').substring(0, 100) + '.pdf';
+
+  router.get('/download-zip/:tipo', async (req: Request, res: Response) => {
+    const config = TIPOS_ZIP[req.params.tipo];
+    if (!config) return res.status(404).json({ erro: 'Tipo inválido' });
+
+    if (!processingService.isProcessado()) {
+      return res.status(400).json({ erro: 'Planilha não processada ainda.' });
+    }
+
+    const docentes = processingService.getDocentes().filter(d => d.tipoPendencia === config.tipo);
+    if (docentes.length === 0) {
+      return res.status(404).json({ erro: 'Nenhum docente encontrado para este tipo.' });
+    }
+
+    const nomesFiltrados = new Set(docentes.map(d => sanitizarNome(d.nomeDocente)));
+    const pdfs = pdfService.listarPDFs().filter(p => nomesFiltrados.has(p.nomeArquivo));
+
+    if (pdfs.length === 0) {
+      return res.status(404).json({ erro: 'Nenhum PDF disponível para este tipo. Gere os PDFs primeiro.' });
+    }
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${config.nomeZip}"`);
 
     const archive = archiver('zip', { zlib: { level: 6 } });
     archive.pipe(res);
