@@ -86,6 +86,7 @@ export function RevisarRelatorio() {
                   <div style={{ display: 'flex', gap: 3 }}>
                     {d.pendenciaAgenda && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#E5000C', display: 'block', marginTop: 2 }} />}
                     {d.pendenciaTach && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#FAAD14', display: 'block', marginTop: 2 }} />}
+                    {!d.pendenciaAgenda && !d.pendenciaTach && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#4BB218', display: 'block', marginTop: 2 }} />}
                   </div>
                 </div>
                 <div style={{ fontSize: 11, color: '#787878', marginTop: 2 }}>{d.matricula} · {d.semanas.length} sem.</div>
