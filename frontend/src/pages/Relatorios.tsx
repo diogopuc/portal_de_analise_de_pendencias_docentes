@@ -114,15 +114,15 @@ export function Relatorios() {
             <Archive size={15} />
             Baixar ZIP Completo
           </a>
-          <a href={relatoriosAPI.getZipSimultaneasUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48, borderColor: '#8C0E28', color: '#8C0E28' }}>
+          <a href={relatoriosAPI.getZipSimultaneasUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
             <Archive size={15} />
             ZIP Simultâneas
           </a>
-          <a href={relatoriosAPI.getZipSomenteAgendaUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48, borderColor: '#E5000C', color: '#E5000C' }}>
+          <a href={relatoriosAPI.getZipSomenteAgendaUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
             <Archive size={15} />
             ZIP Somente Agenda
           </a>
-          <a href={relatoriosAPI.getZipSomenteTachUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48, borderColor: '#FAAD14', color: '#FAAD14' }}>
+          <a href={relatoriosAPI.getZipSomenteTachUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
             <Archive size={15} />
             ZIP Somente TACH
           </a>
