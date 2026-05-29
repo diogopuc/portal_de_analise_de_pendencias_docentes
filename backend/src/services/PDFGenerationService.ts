@@ -182,7 +182,7 @@ export class PDFGenerationService {
         const HORAS_H = 24;
         page.drawRectangle(rr({ x: marginX, y: y - HORAS_H, width: contentW, height: HORAS_H, color: rgb(1, 0.91, 0.91), borderColor: WARNING_COLOR, borderWidth: 1, borderRadius: 4 }));
         page.drawText('Horas Pendentes de Alocação:', { x: marginX + 8, y: y - HORAS_H + 7, size: 9, font: fontBold, color: WARNING_COLOR });
-        page.drawText(`${semana.horasAlocar.toFixed(1)}h  (PENDÊNCIA)`, { x: marginX + 195, y: y - HORAS_H + 7, size: 9, font: fontBold, color: WARNING_COLOR });
+        page.drawText(`${semana.horasAlocar.toFixed(1)}h`, { x: marginX + 195, y: y - HORAS_H + 7, size: 9, font: fontBold, color: WARNING_COLOR });
         y -= HORAS_H + 12;
       }
 
