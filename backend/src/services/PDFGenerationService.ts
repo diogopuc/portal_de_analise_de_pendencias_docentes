@@ -148,16 +148,17 @@ export class PDFGenerationService {
 
       // Semana abonada — exibe bloco informativo e segue para a próxima
       if (semana.abonada) {
-        if (y < 80) { page = pdfDoc.addPage(PageSizes.A4); y = height - 40; }
         const TITLE_H = 26;
+        const ABONO_H = 28;
+        const totalAbono = TITLE_H + 6 + ABONO_H + 16;
+        if (y < totalAbono + 50) { page = pdfDoc.addPage(PageSizes.A4); y = height - 40; }
         page.drawRectangle(rr({ x: marginX, y: y - TITLE_H, width: contentW, height: TITLE_H, color: GRAY, borderRadius: 4 }));
         page.drawText(`${config.semana}  —  ${config.periodo}`, {
           x: marginX + 10, y: y - TITLE_H + 8, size: 10, font: fontBold, color: WHITE,
         });
         y -= TITLE_H + 6;
-        const ABONO_H = 28;
         page.drawRectangle(rr({ x: marginX, y: y - ABONO_H, width: contentW, height: ABONO_H, color: rgb(0.96, 0.96, 0.96), borderColor: GRAY, borderWidth: 0.5, borderRadius: 3 }));
-        page.drawText(semana.motivoAbono || 'Semana desconsiderada', { x: marginX + 8, y: y - ABONO_H / 2 - 3, size: 8, font: fontRegular, color: GRAY });
+        page.drawText(semana.motivoAbono || 'Semana desconsiderada', { x: marginX + 8, y: y - ABONO_H + 9, size: 8, font: fontRegular, color: GRAY });
         y -= ABONO_H + 16;
         continue;
       }
