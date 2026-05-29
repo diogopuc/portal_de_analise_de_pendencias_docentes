@@ -69,11 +69,11 @@ export interface ProcessingStatus {
 }
 
 export const SEMANAS_CONFIG = [
-  { aba: '01.04', semana: 'Semana 01', periodo: '01/04' },
-  { aba: '06.04', semana: 'Semana 02', periodo: '06/04 a 10/04' },
-  { aba: '13.04', semana: 'Semana 03', periodo: '13/04 a 17/04' },
-  { aba: '20.04', semana: 'Semana 04', periodo: '20/04 a 24/04' },
-  { aba: '27.04', semana: 'Semana 05', periodo: '27/04 a 30/04' },
+  { aba: '02.03', semana: 'Semana 01', periodo: '02/03 a 06/03' },
+  { aba: '09.03', semana: 'Semana 02', periodo: '09/03 a 13/03' },
+  { aba: '16.03', semana: 'Semana 03', periodo: '16/03 a 20/03' },
+  { aba: '23.03', semana: 'Semana 04', periodo: '23/03 a 27/03' },
+  { aba: '30.03', semana: 'Semana 05', periodo: '30/03 a 31/03' },
 ];
 
 export const STATUS_TACH_COM_PENDENCIA = [
