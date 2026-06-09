@@ -37,12 +37,6 @@ export function Header({ sidebarAberta, onToggleSidebar }: HeaderProps) {
         </div>
       </div>
 
-      <div className="ml-auto px-6 flex items-center gap-3">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#7EE543' }} />
-          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, whiteSpace: 'nowrap' }}>Sistema Online</span>
-        </div>
-      </div>
     </header>
   );
 }
