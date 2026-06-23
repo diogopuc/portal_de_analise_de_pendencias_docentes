@@ -1,3 +1,6 @@
+// Datas das semanas e semanas abonadas: configuráveis em src/config/semanas.config.ts
+export { SEMANAS_CONFIG, SEMANAS_ABONADAS } from '../config/semanas.config';
+
 export interface DadosSemana {
   semana: string;
   aba: string;
@@ -68,13 +71,6 @@ export interface ProcessingStatus {
   ultimoProcessamento?: string;
 }
 
-export const SEMANAS_CONFIG = [
-  { aba: '04.05', semana: 'Semana 01', periodo: '04/05 a 10/05' },
-  { aba: '11.05', semana: 'Semana 02', periodo: '11/05 a 17/05' },
-  { aba: '18.05', semana: 'Semana 03', periodo: '18/05 a 24/05' },
-  { aba: '25.05', semana: 'Semana 04', periodo: '25/05 a 31/05' }
-];
-
 export const STATUS_TACH_COM_PENDENCIA = [
   'AGUARDANDO APROVAÇÃO',
   'NÃO CRIADO',
@@ -84,8 +80,3 @@ export const STATUS_TACH_COM_PENDENCIA = [
 ];
 
 export const STATUS_TACH_SEM_PENDENCIA = ['APROVADO'];
-
-export const SEMANAS_ABONADAS: Record<string, string> = {
-  '01.04': 'Semana abonada — Feriado: Quinta-Feira Santa (02/04) e Sexta-Feira da Paixão (03/04)',
-  '20.04': 'Semana abonada — Feriado: Tiradentes (21/04)',
-};
