@@ -72,11 +72,10 @@ export interface ProcessingStatus {
 }
 
 export const STATUS_TACH_COM_PENDENCIA = [
-  'AGUARDANDO APROVAÇÃO',
   'NÃO CRIADO',
   'NECESSÁRIO AJUSTAR',
   'RASCUNHO',
   'FINALIZADO',
 ];
 
-export const STATUS_TACH_SEM_PENDENCIA = ['APROVADO'];
+export const STATUS_TACH_SEM_PENDENCIA = ['APROVADO', 'AGUARDANDO APROVAÇÃO'];

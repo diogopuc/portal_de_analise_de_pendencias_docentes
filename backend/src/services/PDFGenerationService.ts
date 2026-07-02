@@ -1,7 +1,7 @@
 import { PDFDocument, rgb, StandardFonts, PageSizes } from 'pdf-lib';
 import fs from 'fs';
 import path from 'path';
-import { Docente, SEMANAS_CONFIG, STATUS_TACH_COM_PENDENCIA } from '../types';
+import { Docente, SEMANAS_CONFIG, STATUS_TACH_COM_PENDENCIA, STATUS_TACH_SEM_PENDENCIA } from '../types';
 
 const PRIMARY = rgb(138 / 255, 5 / 255, 56 / 255);
 const DARK = rgb(30 / 255, 30 / 255, 30 / 255);
@@ -190,7 +190,7 @@ export class PDFGenerationService {
         y -= 14;
 
         for (const sp of semana.statusPorDia) {
-          if (!sp.status || sp.status === 'APROVADO') continue;
+          if (!sp.status || STATUS_TACH_SEM_PENDENCIA.includes(sp.status)) continue;
           if (y < 70) {
             page = pdfDoc.addPage(PageSizes.A4);
             y = height - 40;

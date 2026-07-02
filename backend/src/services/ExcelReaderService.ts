@@ -7,6 +7,7 @@ import {
   SEMANAS_CONFIG,
   SEMANAS_ABONADAS,
   STATUS_TACH_COM_PENDENCIA,
+  STATUS_TACH_SEM_PENDENCIA,
 } from '../types';
 
 export class ExcelReaderService {
@@ -36,7 +37,7 @@ export class ExcelReaderService {
   private temPendenciaTach(statusPorDia: { data: string; status: string }[]): boolean {
     const statuses = statusPorDia
       .map(s => this.normalizarStatus(s.status))
-      .filter(s => s !== '' && s !== 'APROVADO');
+      .filter(s => s !== '' && !STATUS_TACH_SEM_PENDENCIA.includes(s));
     return statuses.length > 0 && statuses.some(s => STATUS_TACH_COM_PENDENCIA.includes(s));
   }
 
