@@ -62,12 +62,13 @@ export function Analise() {
 
               <div style={{ backgroundColor: '#FFFDD9', borderRadius: 8, padding: 16, borderLeft: '4px solid #FAAD14' }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#1E1E1E', margin: '0 0 6px' }}>Pendências de TACH</h4>
-                <p style={{ fontSize: 12, color: '#404040', margin: '0 0 8px' }}>São exibidos apenas os seguintes status (excluindo APROVADO):</p>
+                <p style={{ fontSize: 12, color: '#404040', margin: '0 0 8px' }}>São exibidos apenas os seguintes status (excluindo APROVADO e AGUARDANDO APROVAÇÃO):</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {['AGUARDANDO APROVAÇÃO', 'NÃO CRIADO', 'NECESSÁRIO AJUSTAR', 'RASCUNHO', 'FINALIZADO'].map(s => (
+                  {['NÃO CRIADO', 'NECESSÁRIO AJUSTAR', 'RASCUNHO', 'FINALIZADO'].map(s => (
                     <span key={s} style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, backgroundColor: '#FAAD14', color: 'white', fontWeight: 700 }}>{s}</span>
                   ))}
                   <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, backgroundColor: '#EAFFD9', color: '#4BB218', fontWeight: 700, textDecoration: 'line-through' }}>APROVADO (ignorado)</span>
+                  <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, backgroundColor: '#EAFFD9', color: '#4BB218', fontWeight: 700, textDecoration: 'line-through' }}>AGUARDANDO APROVAÇÃO (ignorado)</span>
                 </div>
               </div>
 
@@ -150,7 +151,7 @@ export function Analise() {
               {[
                 { status: 'APROVADO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Sem pendência — não exibido no relatório' },
                 { status: 'FINALIZADO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Finalizado por importação — docente precisa refazer o TACH' },
-                { status: 'AGUARDANDO APROVAÇÃO', cor: '#FAAD14', bg: '#FFFDD9', desc: 'Submetido, aguardando análise' },
+                { status: 'AGUARDANDO APROVAÇÃO', cor: '#4BB218', bg: '#EAFFD9', desc: 'Sem pendência — não exibido no relatório' },
                 { status: 'RASCUNHO', cor: '#863BFF', bg: '#EFE4FF', desc: 'Em elaboração, não submetido' },
                 { status: 'NÃO CRIADO', cor: '#E5000C', bg: '#FFE0E0', desc: 'TACH não foi criado no sistema' },
                 { status: 'NECESSÁRIO AJUSTAR', cor: '#E5000C', bg: '#FFE0E0', desc: 'Devolvido para correção' },
@@ -176,7 +177,7 @@ export function Analise() {
                 <li><strong>Rodapé</strong> institucional com data de geração</li>
               </ul>
               <div style={{ marginTop: 12, padding: '8px 12px', backgroundColor: '#E5C3D0', borderRadius: 6, fontSize: 12 }}>
-                <strong>Nota:</strong> O status APROVADO nunca é exibido no relatório PDF.
+                <strong>Nota:</strong> Os status APROVADO e AGUARDANDO APROVAÇÃO nunca são exibidos no relatório PDF.
               </div>
             </div>
           </Secao>
