@@ -30,7 +30,7 @@ export class ExcelReaderService {
   }
 
   private normalizarStatus(status: string): string {
-    return status.toString().toUpperCase().trim();
+    return status.toString().normalize('NFC').toUpperCase().trim();
   }
 
   private temPendenciaTach(statusPorDia: { data: string; status: string }[]): boolean {
@@ -40,7 +40,9 @@ export class ExcelReaderService {
     return statuses.length > 0 && statuses.some(s => STATUS_TACH_COM_PENDENCIA.includes(s));
   }
 
-  private temPendenciaAgenda(chContrato: number, horasAlocar: number): boolean {
+  private temPendenciaAgenda(horasAlocar: number, geraAgenda: string): boolean {
+    const naoGera = ['nao', 'n', 'no', 'false', '0'].includes(this.normalizarTexto(geraAgenda));
+    if (naoGera) return false;
     return horasAlocar > 0;
   }
 
@@ -69,6 +71,8 @@ export class ExcelReaderService {
       const colCurso = this.encontrarColuna(headers, ['curso']);
       const colGeraAgenda = this.encontrarColuna(headers, ['gera agenda']);
 
+      if (colMatricula === -1) continue;
+
       const colsStatus: { data: string; idx: number }[] = [];
       headers.forEach((h, i) => {
         if (this.normalizarTexto(h).includes('status')) {
@@ -96,7 +100,7 @@ export class ExcelReaderService {
         })).filter(s => s.status !== '');
 
         const abonada = config.aba in SEMANAS_ABONADAS;
-        const pendenciaAgenda = abonada ? false : this.temPendenciaAgenda(chContrato, horasAlocar);
+        const pendenciaAgenda = abonada ? false : this.temPendenciaAgenda(horasAlocar, geraAgenda);
         const pendenciaTach   = abonada ? false : this.temPendenciaTach(statusPorDia);
 
         const dadosSemana: DadosSemana = {

@@ -35,6 +35,7 @@ export class ProcessingService {
   }
 
   async processarPlanilha(caminhoArquivo: string): Promise<void> {
+    this.docentes = [];
     this.status.emProcessamento = true;
     this.status.progresso = 0;
     this.status.etapa = 'Iniciando processamento...';

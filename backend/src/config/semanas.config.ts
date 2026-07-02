@@ -16,14 +16,15 @@
 // =============================================================================
 
 export const SEMANAS_CONFIG = [
-  { aba: '04.05', semana: 'Semana 01', periodo: '04/05 a 10/05' },
-  { aba: '11.05', semana: 'Semana 02', periodo: '11/05 a 17/05' },
-  { aba: '18.05', semana: 'Semana 03', periodo: '18/05 a 24/05' },
-  { aba: '25.05', semana: 'Semana 04', periodo: '25/05 a 31/05' },
+  { aba: '01.06', semana: 'Semana 01', periodo: '01/06 a 07/06' },
+  { aba: '08.06', semana: 'Semana 02', periodo: '08/06 a 14/06' },
+  { aba: '15.06', semana: 'Semana 03', periodo: '15/06 a 21/06' },
+  { aba: '22.06', semana: 'Semana 04', periodo: '22/06 a 28/06' },
 ];
 
 // Semanas abonadas: chave = "aba" (igual à tabela acima), valor = motivo exibido no painel.
 // Deixe o objeto vazio ({}) quando não houver nenhuma semana abonada no mês.
 export const SEMANAS_ABONADAS: Record<string, string> = {
   // '04.05': 'Semana abonada — Feriado: Exemplo (01/05)',
+  '01.06': 'Semana abonada - Feriado: Corpus Christi (04/06/2026)'
 };

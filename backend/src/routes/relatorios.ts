@@ -226,9 +226,9 @@ export function relatoriosRoutes(
     'somente-tach':   { tipo: 'somente_tach',   nomeZip: 'pendencias_somente_tach.zip' },
   };
 
-  const sanitizarNome = (nome: string) =>
+  const sanitizarNome = (nome: string, matricula: number) =>
     nome.toUpperCase().replace(/\s+/g, '_').normalize('NFD')
-      .replace(/[̀-ͯ]/g, '').replace(/[^A-Z0-9_]/g, '').substring(0, 100) + '.pdf';
+      .replace(/[̀-ͯ]/g, '').replace(/[^A-Z0-9_]/g, '').substring(0, 100) + `_${matricula}.pdf`;
 
   router.get('/download-zip/:tipo', async (req: Request, res: Response) => {
     const config = TIPOS_ZIP[req.params.tipo];
@@ -243,7 +243,7 @@ export function relatoriosRoutes(
       return res.status(404).json({ erro: 'Nenhum docente encontrado para este tipo.' });
     }
 
-    const nomesFiltrados = new Set(docentes.map(d => sanitizarNome(d.nomeDocente)));
+    const nomesFiltrados = new Set(docentes.map(d => sanitizarNome(d.nomeDocente, d.matricula)));
     const pdfs = pdfService.listarPDFs().filter(p => nomesFiltrados.has(p.nomeArquivo));
 
     if (pdfs.length === 0) {

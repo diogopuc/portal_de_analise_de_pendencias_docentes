@@ -7,7 +7,6 @@ const PRIMARY = rgb(138 / 255, 5 / 255, 56 / 255);
 const DARK = rgb(30 / 255, 30 / 255, 30 / 255);
 const GRAY = rgb(120 / 255, 120 / 255, 120 / 255);
 const WHITE = rgb(1, 1, 1);
-const SUCCESS = rgb(75 / 255, 178 / 255, 24 / 255);
 const WARNING_COLOR = rgb(229 / 255, 0 / 255, 12 / 255);
 const ORANGE = rgb(250 / 255, 173 / 255, 20 / 255);
 
@@ -26,10 +25,12 @@ function sanitizarNomeArquivo(nome: string): string {
 
 function nomeMes(aba: string): string {
   const meses: Record<string, string> = {
-    '04': 'Abril', '05': 'Maio', '03': 'Março', '06': 'Junho',
+    '01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril',
+    '05': 'Maio', '06': 'Junho', '07': 'Julho', '08': 'Agosto',
+    '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro',
   };
   const mes = aba.split('.')[1];
-  return meses[mes] || 'Abril';
+  return meses[mes] || aba;
 }
 
 export class PDFGenerationService {
@@ -153,7 +154,9 @@ export class PDFGenerationService {
       if (!semana.pendenciaAgenda && !semana.pendenciaTach) continue;
 
       // Estima altura mínima para o bloco desta semana
-      const linhasTach = semana.pendenciaTach ? semana.statusPorDia.length : 0;
+      const linhasTach = semana.pendenciaTach
+        ? semana.statusPorDia.filter(sp => sp.status && sp.status !== 'APROVADO').length
+        : 0;
       const estimativa = 32 + (semana.pendenciaAgenda ? 28 + 10 : 0) + (semana.pendenciaTach ? 14 + linhasTach * 14 : 0) + 40;
       if (y < estimativa + 50) {
         page = pdfDoc.addPage(PageSizes.A4);
@@ -193,8 +196,7 @@ export class PDFGenerationService {
             y = height - 40;
           }
           const statusExibido = mapearStatus(sp.status);
-          const isAprovado = sp.status === 'APROVADO';
-          const corStatus = isAprovado ? SUCCESS : STATUS_TACH_COM_PENDENCIA.includes(sp.status) ? WARNING_COLOR : ORANGE;
+          const corStatus = STATUS_TACH_COM_PENDENCIA.includes(sp.status) ? WARNING_COLOR : ORANGE;
           page.drawRectangle(rr({ x: marginX + 10, y: y - 3, width: 7, height: 7, color: corStatus, borderRadius: 1 }));
           page.drawText(`${sp.data}:`, { x: marginX + 22, y, size: 8, font: fontBold, color: GRAY });
           page.drawText(statusExibido, { x: marginX + 120, y, size: 8, font: fontRegular, color: corStatus });
@@ -233,7 +235,7 @@ export class PDFGenerationService {
     });
 
     const pdfBytes = await pdfDoc.save();
-    const nomeArquivo = `${sanitizarNomeArquivo(docente.nomeDocente)}.pdf`;
+    const nomeArquivo = `${sanitizarNomeArquivo(docente.nomeDocente)}_${docente.matricula}.pdf`;
     const caminho = path.join(this.relatoriosDir, nomeArquivo);
     fs.writeFileSync(caminho, pdfBytes);
 
