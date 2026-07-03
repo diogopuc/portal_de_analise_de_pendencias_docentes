@@ -65,6 +65,11 @@
 
 * { box-sizing: border-box; }
 
+/* Remove outline de foco nos elementos SVG dos gráficos Recharts */
+.recharts-wrapper *:focus,
+.recharts-surface:focus,
+svg *:focus { outline: none; }
+
 body {
   font-family: var(--font-source);
   background-color: var(--surface-0);
