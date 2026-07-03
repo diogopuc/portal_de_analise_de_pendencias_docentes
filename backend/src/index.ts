@@ -51,12 +51,25 @@ app.get('/api/health', (_req, res) => {
 
 app.use(errorHandler);
 
-async function inicializar() {
-  const arquivoPadrao = path.join(DATA_DIR, 'Atv_Pendentes_Abril.xlsx');
-  const arquivoRaiz   = path.resolve(__dirname, '..', '..', 'Atv_Pendentes_Abril.xlsx');
+function encontrarPlanilha(): string {
+  // Varre a pasta data procurando qualquer .xlsx (exceto a pasta relatorios)
+  const candidatos = fs.readdirSync(DATA_DIR)
+    .filter(f => f.toLowerCase().endsWith('.xlsx'))
+    .map(f => path.join(DATA_DIR, f));
 
-  const arquivoParaProcessar = fs.existsSync(arquivoPadrao) ? arquivoPadrao
-    : fs.existsSync(arquivoRaiz) ? arquivoRaiz : '';
+  // Tenta também a raiz do projeto
+  const raiz = path.resolve(__dirname, '..', '..');
+  if (fs.existsSync(raiz)) {
+    fs.readdirSync(raiz)
+      .filter(f => f.toLowerCase().endsWith('.xlsx'))
+      .forEach(f => candidatos.push(path.join(raiz, f)));
+  }
+
+  return candidatos[0] || '';
+}
+
+async function inicializar() {
+  const arquivoParaProcessar = encontrarPlanilha();
 
   if (arquivoParaProcessar) {
     console.log(`[BOOT] Processando planilha: ${arquivoParaProcessar}`);

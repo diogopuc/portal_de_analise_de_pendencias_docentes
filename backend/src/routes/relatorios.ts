@@ -39,11 +39,14 @@ export function relatoriosRoutes(
       if (req.file) {
         caminhoArquivo = req.file.path;
       } else {
-        const padrao = path.join(dataDir, 'Atv_Pendentes_Abril.xlsx');
-        if (!fs.existsSync(padrao)) {
-          return res.status(400).json({ erro: 'Nenhum arquivo enviado e arquivo padrão não encontrado.' });
+        // Varre a pasta data procurando qualquer .xlsx disponível
+        const arquivos = fs.readdirSync(dataDir)
+          .filter(f => f.toLowerCase().endsWith('.xlsx'))
+          .map(f => path.join(dataDir, f));
+        if (arquivos.length === 0) {
+          return res.status(400).json({ erro: 'Nenhum arquivo enviado e nenhuma planilha encontrada na pasta data.' });
         }
-        caminhoArquivo = padrao;
+        caminhoArquivo = arquivos[0];
       }
 
       await processarPlanilha.executar(caminhoArquivo);
