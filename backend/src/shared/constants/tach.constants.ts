@@ -1,0 +1,11 @@
+export const STATUS_TACH_COM_PENDENCIA = [
+  'NÃO CRIADO',
+  'NECESSÁRIO AJUSTAR',
+  'RASCUNHO',
+  'FINALIZADO',
+] as const;
+
+export const STATUS_TACH_SEM_PENDENCIA = [
+  'APROVADO',
+  'AGUARDANDO APROVAÇÃO',
+] as const;
