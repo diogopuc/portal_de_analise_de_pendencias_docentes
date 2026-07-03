@@ -72,25 +72,17 @@ export function RevisarRelatorio() {
               <button
                 key={d.matricula}
                 onClick={() => selecionarDocente(d, idx)}
-                style={{
-                  width: '100%', textAlign: 'left', padding: '12px 16px', border: 'none',
-                  backgroundColor: docenteAtual?.matricula === d.matricula ? '#E5C3D0' : 'transparent',
-                  borderLeft: docenteAtual?.matricula === d.matricula ? '3px solid #8A0538' : '3px solid transparent',
-                  cursor: 'pointer', display: 'block', transition: 'all 0.15s',
-                  borderBottom: '1px solid #F0F2F2',
-                }}
+                className={`docente-item${docenteAtual?.matricula === d.matricula ? ' docente-item--active' : ''}`}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1E1E1E', lineHeight: 1.3, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {d.nomeDocente}
-                  </div>
-                  <div style={{ display: 'flex', gap: 3 }}>
-                    {d.pendenciaAgenda && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#E5000C', display: 'block', marginTop: 2 }} />}
-                    {d.pendenciaTach && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#FAAD14', display: 'block', marginTop: 2 }} />}
-                    {!d.pendenciaAgenda && !d.pendenciaTach && <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#4BB218', display: 'block', marginTop: 2 }} />}
+                  <p className="docente-item__name">{d.nomeDocente}</p>
+                  <div style={{ display: 'flex', gap: 3, marginTop: 2 }}>
+                    {d.pendenciaAgenda && <span className="status-dot status-dot--err" />}
+                    {d.pendenciaTach && <span className="status-dot status-dot--warn" />}
+                    {!d.pendenciaAgenda && !d.pendenciaTach && <span className="status-dot status-dot--ok" />}
                   </div>
                 </div>
-                <div style={{ fontSize: 11, color: '#787878', marginTop: 2 }}>{d.matricula} · {d.semanas.length} sem.</div>
+                <p className="docente-item__meta">{d.matricula} · {d.semanas.length} sem.</p>
               </button>
             ))}
           </div>

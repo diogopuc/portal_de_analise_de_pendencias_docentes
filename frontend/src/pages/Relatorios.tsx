@@ -95,7 +95,7 @@ export function Relatorios() {
 
       {processarMut.isPending && (
         <div className="status-banner status-banner--processing">
-          <Loader2 size={20} color="#8A0538" className="animate-spin" />
+          <span className="status-dot status-dot--running" />
           <span style={{ color: '#8A0538', fontWeight: 600 }}>Processando planilha...</span>
         </div>
       )}

@@ -1,21 +1,34 @@
-import { BookOpen, GitBranch, AlertCircle, CheckCircle, Info, BarChart2 } from 'lucide-react';
-import { Card } from '../components/ui/Card';
+import { useState } from 'react';
+import { BookOpen, GitBranch, AlertCircle, CheckCircle, BarChart2, ChevronDown } from 'lucide-react';
 
 interface SecaoProps {
   titulo: string;
   icon: React.ReactNode;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }
 
-function Secao({ titulo, icon, children }: SecaoProps) {
+function Secao({ titulo, icon, children, defaultOpen = true }: SecaoProps) {
+  const [aberto, setAberto] = useState(defaultOpen);
   return (
-    <Card style={{ marginBottom: 16 }}>
-      <div className="card-section-header">
-        {icon}
-        <h2>{titulo}</h2>
+    <div className="secao-card">
+      <button
+        className={`secao-header${aberto ? ' secao-header--open' : ''}`}
+        onClick={() => setAberto(p => !p)}
+        aria-expanded={aberto}
+      >
+        <div className="secao-header-left">
+          {icon}
+          <h2 className="secao-title">{titulo}</h2>
+        </div>
+        <ChevronDown size={16} className="secao-chevron" />
+      </button>
+      <div className={`secao-body${aberto ? ' secao-body--open' : ''}`}>
+        <div className="secao-body-inner">
+          {children}
+        </div>
       </div>
-      {children}
-    </Card>
+    </div>
   );
 }
 

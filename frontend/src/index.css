@@ -46,12 +46,20 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&display=swap');
 
-/* Disable animations for users who prefer reduced motion */
+/* Disable only continuous animations for users who prefer reduced motion (cookbook approach) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .animate-spin,
+  .animate-pulse,
+  .animate-fadeIn,
+  .status-dot--running {
+    animation: none !important;
+  }
+  .secao-body,
+  .sidebar-nav-label,
+  .app-sidebar,
+  .app-footer,
+  .app-main {
+    transition: none !important;
   }
 }
 
@@ -66,9 +74,14 @@ body {
 
 h1, h2, h3, h4, h5, h6 { font-family: var(--font-poppins); }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--surface-0); }
-::-webkit-scrollbar-thumb { background: #8A0538; border-radius: 3px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #8A0538;
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
 
 /* ===== App Layout ===== */
 .app-layout {
@@ -445,8 +458,12 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-poppins); }
   transform: translateY(-50%);
   pointer-events: none;
   color: #787878;
+  transition: color var(--dur-1) var(--ease);
 }
 .form-control-wrapper .form-control { padding-left: 32px; }
+/* focus-within: highlight border + icon at container level (cookbook pattern) */
+.form-control-wrapper:focus-within .form-control { border-color: #8A0538; }
+.form-control-wrapper:focus-within .form-icon { color: #8A0538; }
 
 /* ===== Data Table ===== */
 .data-table-wrapper {
@@ -479,7 +496,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-poppins); }
 .data-table tbody tr:nth-child(odd)  { background-color: var(--surface-1); }
 .data-table tbody tr:nth-child(even) { background-color: var(--surface-2); }
 .data-table tbody tr:hover           { background-color: var(--surface-0); }
-.data-table td { padding: 12px 16px; }
+.data-table td { padding: 12px 16px; font-variant-numeric: tabular-nums; }
 .data-table-empty { padding: 40px; text-align: center; color: #787878; }
 
 /* ===== Pagination ===== */
@@ -518,6 +535,92 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-poppins); }
   border-radius: 6px;
   transition: width 0.6s ease;
 }
+
+/* ===== Status Dot (cookbook pulse pattern) ===== */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.status-dot--running {
+  background: #8A0538;
+  animation: dot-pulse 1.2s var(--ease) infinite;
+}
+.status-dot--ok   { background: #4BB218; }
+.status-dot--warn { background: #FAAD14; }
+.status-dot--err  { background: #E5000C; }
+
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.5); opacity: 0.5; }
+}
+
+/* ===== Secao Accordion (grid-template-rows — cookbook pattern) ===== */
+.secao-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.secao-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px 24px;
+  border-bottom: 2px solid transparent;
+  transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  text-align: left;
+}
+.secao-header:hover { background-color: rgba(138, 5, 56, 0.04); }
+.secao-header--open { border-bottom-color: #8A0538; }
+
+.secao-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #8A0538;
+  flex: 1;
+  min-width: 0;
+}
+
+.secao-title {
+  font-family: var(--font-poppins);
+  font-weight: 700;
+  font-size: 16px;
+  color: #8A0538;
+  margin: 0;
+}
+
+.secao-chevron {
+  color: #8A0538;
+  flex-shrink: 0;
+  transition: transform var(--dur-2) var(--ease);
+}
+.secao-header--open .secao-chevron { transform: rotate(180deg); }
+
+/* grid-template-rows accordion — avoids JS height measurement */
+.secao-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-2) var(--ease);
+}
+.secao-body--open { grid-template-rows: 1fr; }
+
+.secao-body-inner {
+  overflow: hidden;
+  min-height: 0;
+  padding: 0 24px;
+}
+.secao-body--open .secao-body-inner { padding: 16px 24px 24px; }
 
 /* ===== Status Banner ===== */
 .status-banner {
@@ -679,8 +782,43 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-poppins); }
 
 .app-footer-author { color: #E5C3D0; font-weight: 600; }
 
+/* ===== Docente List Item (RevisarRelatorio sidebar) ===== */
+.docente-item {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  border: none;
+  background-color: transparent;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  display: block;
+  border-bottom: 1px solid var(--surface-0);
+  transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.docente-item:hover { background-color: rgba(138, 5, 56, 0.04); }
+.docente-item--active {
+  background-color: #E5C3D0;
+  border-left-color: #8A0538;
+}
+
+.docente-item__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1E1E1E;
+  line-height: 1.3;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docente-item__meta {
+  font-size: 11px;
+  color: #787878;
+  margin-top: 2px;
+}
+
 /* ===== Animations ===== */
-.sidebar-transition { transition: width var(--dur-2) var(--ease); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 .animate-spin { animation: spin 1s linear infinite; }
