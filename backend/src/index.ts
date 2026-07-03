@@ -71,10 +71,15 @@ async function inicializar() {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`\n========================================`);
-  console.log(`  Portal de Pendências Docentes - PUCPR`);
-  console.log(`  Backend rodando em: http://localhost:${PORT}`);
-  console.log(`========================================\n`);
-  inicializar();
-});
+async function main() {
+  await inicializar();
+
+  app.listen(PORT, () => {
+    console.log(`\n========================================`);
+    console.log(`  Portal de Pendências Docentes - PUCPR`);
+    console.log(`  Backend rodando em: http://localhost:${PORT}`);
+    console.log(`========================================\n`);
+  });
+}
+
+main();

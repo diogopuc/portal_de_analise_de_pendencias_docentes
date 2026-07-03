@@ -1,12 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea,
   PieChart, Pie,
 } from 'recharts';
 import { Users, AlertTriangle, Clock, RefreshCw, CheckCircle } from 'lucide-react';
-import { dashboardAPI } from '../services/api';
+import { dashboardAPI, relatoriosAPI } from '../services/api';
 import { StatCard, Card } from '../components/ui/Card';
 import { SkeletonCard } from '../components/ui/Skeleton';
+import { useToast } from '../components/ui/Toast';
 
 const CORES_TACH: Record<string, string> = {
   'NÃO CRIADO': '#E5000C',
@@ -22,10 +23,14 @@ function formatarData(iso: string) {
 }
 
 export function Painel() {
+  const qc = useQueryClient();
+  const { mostrar } = useToast();
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashboard'],
     queryFn: dashboardAPI.getDados,
-    refetchInterval: 30000,
+    // Tenta a cada 5s enquanto sem dados (race condition no boot do server); após 30s
+    refetchInterval: (query) => (!query.state.data?.totalDocentes ? 5000 : 30000),
+    refetchOnMount: true,
   });
 
   if (isLoading) {
@@ -41,6 +46,16 @@ export function Painel() {
     );
   }
 
+  const processarMut = useMutation({
+    mutationFn: () => relatoriosAPI.processar(undefined),
+    onSuccess: (res) => {
+      mostrar('sucesso', res.mensagem);
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['docentes'] });
+    },
+    onError: (err: any) => mostrar('erro', err.response?.data?.erro || 'Erro ao processar'),
+  });
+
   if (!data || data.totalDocentes === 0) {
     return (
       <div>
@@ -48,8 +63,20 @@ export function Painel() {
         <Card style={{ textAlign: 'center', padding: 48 }}>
           <AlertTriangle size={48} color="#FAAD14" style={{ margin: '0 auto 16px' }} />
           <h2 style={{ color: '#1E1E1E', margin: '0 0 8px' }}>Nenhum dado processado</h2>
-          <p style={{ color: '#787878', marginBottom: 24 }}>Acesse a página de Relatórios para processar a planilha.</p>
-          <a href="/relatorios" className="btn-primary">Ir para Relatórios</a>
+          <p style={{ color: '#787878', marginBottom: 24 }}>
+            Processe a planilha padrão ou acesse Relatórios para fazer upload.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              className="btn-primary"
+              onClick={() => processarMut.mutate()}
+              disabled={processarMut.isPending}
+            >
+              <RefreshCw size={16} className={processarMut.isPending ? 'animate-spin' : ''} />
+              {processarMut.isPending ? 'Processando...' : 'Processar Planilha Padrão'}
+            </button>
+            <a href="/relatorios" className="btn-secondary">Ir para Relatórios</a>
+          </div>
         </Card>
       </div>
     );
