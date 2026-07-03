@@ -201,7 +201,7 @@ export function Relatorios() {
                             <FileText size={13} /> PDF
                           </button>
                           <a
-                            href={`/api/relatorios/download/${d.nomeDocente.toUpperCase().replace(/\s+/g, '_').normalize('NFD').replace(/[̀-͠]/g, '').replace(/[^A-Z0-9_]/g, '')}.pdf`}
+                            href={relatoriosAPI.getDownloadUrl(relatoriosAPI.getNomeArquivo(d.nomeDocente, d.matricula))}
                             target="_blank"
                             rel="noreferrer"
                             title="Download PDF"

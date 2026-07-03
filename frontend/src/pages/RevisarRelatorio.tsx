@@ -117,7 +117,7 @@ export function RevisarRelatorio() {
                       {gerarPDFMut.isPending ? <RefreshCw size={13} className="animate-spin" /> : <FileText size={13} />}
                       Gerar PDF
                     </button>
-                    <a href={relatoriosAPI.getDownloadUrl(`${docenteAtual.nomeDocente.toUpperCase().replace(/\s+/g, '_')}.pdf`)}
+                    <a href={relatoriosAPI.getDownloadUrl(relatoriosAPI.getNomeArquivo(docenteAtual.nomeDocente, docenteAtual.matricula))}
                       target="_blank" rel="noreferrer" className="btn-secondary btn-xs">
                       <Download size={13} />
                     </a>

@@ -18,6 +18,8 @@ export interface DadosSemana {
   resultadoTach: string;
   pendenciaAgenda: boolean;
   pendenciaTach: boolean;
+  abonada: boolean;
+  motivoAbono?: string;
 }
 
 export interface Docente {
@@ -37,7 +39,7 @@ export interface DashboardData {
   totalPendenciaTach: number;
   totalSimultaneo: number;
   semPendencia: number;
-  porSemana: { semana: string; aba: string; pendenciaAgenda: number; pendenciaTach: number; total: number }[];
+  porSemana: { semana: string; aba: string; pendenciaAgenda: number; pendenciaTach: number; total: number; abonada: boolean; motivoAbono?: string }[];
   porCampus: { campus: string; total: number }[];
   statusTachDistribuicao: { status: string; total: number }[];
   ultimaAtualizacao: string;
@@ -68,9 +70,16 @@ export interface ProcessingStatus {
   ultimoProcessamento?: string;
 }
 
-export interface PaginatedResponse<T> {
-  docentes?: T[];
-  relatorios?: T[];
+export interface PaginatedDocentes {
+  docentes: Docente[];
+  total: number;
+  pagina: number;
+  limite: number;
+  totalPaginas: number;
+}
+
+export interface PaginatedRelatorios {
+  relatorios: RelatorioPDF[];
   total: number;
   pagina: number;
   limite: number;
