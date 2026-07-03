@@ -28,9 +28,18 @@ export function Painel() {
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashboard'],
     queryFn: dashboardAPI.getDados,
-    // Tenta a cada 5s enquanto sem dados (race condition no boot do server); após 30s
     refetchInterval: (query) => (!query.state.data?.totalDocentes ? 5000 : 30000),
     refetchOnMount: true,
+  });
+
+  const processarMut = useMutation({
+    mutationFn: () => relatoriosAPI.processar(undefined),
+    onSuccess: (res) => {
+      mostrar('sucesso', res.mensagem);
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      qc.invalidateQueries({ queryKey: ['docentes'] });
+    },
+    onError: (err: any) => mostrar('erro', err.response?.data?.erro || 'Erro ao processar'),
   });
 
   if (isLoading) {
@@ -45,16 +54,6 @@ export function Painel() {
       </div>
     );
   }
-
-  const processarMut = useMutation({
-    mutationFn: () => relatoriosAPI.processar(undefined),
-    onSuccess: (res) => {
-      mostrar('sucesso', res.mensagem);
-      qc.invalidateQueries({ queryKey: ['dashboard'] });
-      qc.invalidateQueries({ queryKey: ['docentes'] });
-    },
-    onError: (err: any) => mostrar('erro', err.response?.data?.erro || 'Erro ao processar'),
-  });
 
   if (!data || data.totalDocentes === 0) {
     return (
