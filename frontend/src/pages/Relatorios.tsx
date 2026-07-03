@@ -75,18 +75,18 @@ export function Relatorios() {
 
   return (
     <div className="animate-fadeIn">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+      <div className="page-header">
         <div>
-          <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: 0 }}>Relatórios</h1>
-          <p style={{ color: '#787878', margin: '4px 0 0', fontSize: 13 }}>Processamento e geração de PDFs para docentes com pendências</p>
+          <h1 className="page-title">Relatórios</h1>
+          <p className="page-subtitle">Processamento e geração de PDFs para docentes com pendências</p>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="page-header-actions">
           <input ref={fileRef} type="file" accept=".xlsx" onChange={handleFileUpload} style={{ display: 'none' }} />
-          <button className="btn-secondary" onClick={() => fileRef.current?.click()} disabled={processarMut.isPending} style={{ height: 42, padding: '0 16px', fontSize: 13 }}>
+          <button className="btn-secondary btn-sm" onClick={() => fileRef.current?.click()} disabled={processarMut.isPending}>
             <Upload size={15} />
             {processarMut.isPending ? 'Processando...' : 'Upload Planilha'}
           </button>
-          <button className="btn-primary" onClick={() => processarMut.mutate(undefined)} disabled={processarMut.isPending} style={{ height: 42, padding: '0 16px', fontSize: 13 }}>
+          <button className="btn-primary btn-sm" onClick={() => processarMut.mutate(undefined)} disabled={processarMut.isPending}>
             <RefreshCw size={15} className={processarMut.isPending ? 'animate-spin' : ''} />
             Reprocessar
           </button>
@@ -94,81 +94,67 @@ export function Relatorios() {
       </div>
 
       {processarMut.isPending && (
-        <Card style={{ marginBottom: 16, backgroundColor: '#E5C3D0', border: '1px solid #8A0538' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Loader2 size={20} color="#8A0538" className="animate-spin" />
-            <span style={{ color: '#8A0538', fontWeight: 600 }}>Processando planilha...</span>
-          </div>
-        </Card>
+        <div className="status-banner status-banner--processing">
+          <Loader2 size={20} color="#8A0538" className="animate-spin" />
+          <span style={{ color: '#8A0538', fontWeight: 600 }}>Processando planilha...</span>
+        </div>
       )}
 
       {/* Ações em lote */}
-      <Card style={{ marginBottom: 20, padding: '16px 20px' }}>
-        <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#1E1E1E', margin: '0 0 12px' }}>Ações Rápidas</h3>
+      <Card className="card--p-md" style={{ marginBottom: 20 }}>
+        <h3 style={{ fontFamily: 'var(--font-poppins)', fontWeight: 600, fontSize: 14, color: '#1E1E1E', margin: '0 0 12px' }}>Ações Rápidas</h3>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button className="btn-primary" onClick={handleGerarTodos} disabled={gerandoTodos || !data?.total} style={{ fontSize: 13 }}>
+          <button className="btn-primary" onClick={handleGerarTodos} disabled={gerandoTodos || !data?.total}>
             {gerandoTodos ? <Loader2 size={15} className="animate-spin" /> : <FileText size={15} />}
             {gerandoTodos ? 'Gerando PDFs...' : `Gerar Todos os PDFs (${data?.total || 0})`}
           </button>
-          <a href={relatoriosAPI.getZipUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
-            <Archive size={15} />
-            Baixar ZIP Completo
-          </a>
-          <a href={relatoriosAPI.getZipSimultaneasUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
-            <Archive size={15} />
-            ZIP Simultâneas
-          </a>
-          <a href={relatoriosAPI.getZipSomenteAgendaUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
-            <Archive size={15} />
-            ZIP Somente Agenda
-          </a>
-          <a href={relatoriosAPI.getZipSomenteTachUrl()} className="btn-secondary" style={{ textDecoration: 'none', fontSize: 13, height: 48 }}>
-            <Archive size={15} />
-            ZIP Somente TACH
-          </a>
+          <a href={relatoriosAPI.getZipUrl()} className="btn-secondary"><Archive size={15} />Baixar ZIP Completo</a>
+          <a href={relatoriosAPI.getZipSimultaneasUrl()} className="btn-secondary"><Archive size={15} />ZIP Simultâneas</a>
+          <a href={relatoriosAPI.getZipSomenteAgendaUrl()} className="btn-secondary"><Archive size={15} />ZIP Somente Agenda</a>
+          <a href={relatoriosAPI.getZipSomenteTachUrl()} className="btn-secondary"><Archive size={15} />ZIP Somente TACH</a>
         </div>
       </Card>
 
       {/* Filtros */}
-      <Card style={{ marginBottom: 16, padding: '16px 20px' }}>
+      <Card className="card--p-md" style={{ marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, minWidth: 200 }}>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#787878', marginBottom: 6 }}>BUSCAR</label>
-            <div style={{ position: 'relative' }}>
-              <Search size={15} color="#787878" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+            <label className="form-label">Buscar</label>
+            <div className="form-control-wrapper">
+              <Search size={15} className="form-icon" />
               <input
                 type="text"
                 placeholder="Nome ou matrícula..."
                 value={busca}
                 onChange={e => setBusca(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && buscarComFiltro()}
-                style={{ width: '100%', padding: '8px 12px 8px 32px', border: '1px solid #E4E4E4', borderRadius: 6, fontSize: 14, outline: 'none', color: '#1E1E1E' }}
+                className="form-control"
               />
             </div>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#787878', marginBottom: 6 }}>CAMPUS</label>
+            <label className="form-label">Campus</label>
             <select
               value={campus}
               onChange={e => { setCampus(e.target.value); setPagina(1); }}
-              style={{ padding: '8px 32px 8px 12px', border: '1px solid #E4E4E4', borderRadius: 6, fontSize: 14, color: '#1E1E1E', backgroundColor: 'white', cursor: 'pointer' }}
+              className="form-control form-control--select"
             >
               <option value="">Todos</option>
               {campusList?.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#787878', marginBottom: 6 }}>TIPO DE PENDÊNCIA</label>
+            <label className="form-label">Tipo de Pendência</label>
             <select
               value={tipoPendencia}
               onChange={e => { setTipoPendencia(e.target.value); setPagina(1); }}
-              style={{ padding: '8px 32px 8px 12px', border: '1px solid #E4E4E4', borderRadius: 6, fontSize: 14, color: '#1E1E1E', backgroundColor: 'white', cursor: 'pointer' }}
+              className="form-control form-control--select"
             >
               <option value="">Todos</option>
               {Object.entries(TIPO_PENDENCIA_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
           </div>
-          <button className="btn-primary" onClick={buscarComFiltro} style={{ height: 38, padding: '0 16px', fontSize: 13 }}>
+          <button className="btn-primary btn-sm" onClick={buscarComFiltro}>
             <Filter size={14} /> Filtrar
           </button>
         </div>
@@ -178,42 +164,39 @@ export function Relatorios() {
       {isLoading || isFetching ? (
         <SkeletonTable rows={10} />
       ) : (
-        <div style={{ backgroundColor: 'white', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+        <div className="data-table-wrapper">
+          <div className="data-table-scroll">
+            <table className="data-table">
               <thead>
-                <tr style={{ backgroundColor: '#8A0538' }}>
+                <tr>
                   {['Matrícula', 'Nome Docente', 'Campus', 'Tipo de Pendência', 'Semanas', 'Ações'].map(h => (
-                    <th key={h} style={{ padding: '12px 16px', color: 'white', textAlign: 'left', fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap' }}>{h}</th>
+                    <th key={h}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {data?.docentes?.map((d, i) => {
+                {data?.docentes?.map((d) => {
                   const cor = TIPO_COR[d.tipoPendencia] || TIPO_COR.sem_pendencia;
                   return (
-                    <tr key={d.matricula} style={{ backgroundColor: i % 2 === 0 ? '#FAFAFA' : 'white', borderBottom: '1px solid #E4E4E4', transition: 'background 0.1s' }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F0F2F2')}
-                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? '#FAFAFA' : 'white')}
-                    >
-                      <td style={{ padding: '12px 16px', color: '#787878', fontWeight: 600 }}>{d.matricula}</td>
-                      <td style={{ padding: '12px 16px', color: '#1E1E1E', fontWeight: 500, maxWidth: 240 }}>
+                    <tr key={d.matricula}>
+                      <td style={{ color: '#787878', fontWeight: 600 }}>{d.matricula}</td>
+                      <td style={{ color: '#1E1E1E', fontWeight: 500, maxWidth: 240 }}>
                         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.nomeDocente}</div>
                       </td>
-                      <td style={{ padding: '12px 16px', color: '#404040', fontSize: 13 }}>{d.campus}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ backgroundColor: cor.bg, color: cor.color, borderRadius: 4, padding: '3px 10px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                      <td style={{ color: '#404040', fontSize: 13 }}>{d.campus}</td>
+                      <td>
+                        <span className="badge" style={{ backgroundColor: cor.bg, color: cor.color }}>
                           {TIPO_PENDENCIA_LABELS[d.tipoPendencia]}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 16px', color: '#787878', fontSize: 13 }}>{d.semanas.length} semana(s)</td>
-                      <td style={{ padding: '12px 16px' }}>
+                      <td style={{ color: '#787878', fontSize: 13 }}>{d.semanas.length} semana(s)</td>
+                      <td>
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button
                             onClick={() => gerarPDFMut.mutate(d.matricula)}
                             disabled={gerarPDFMut.isPending}
                             title="Gerar PDF"
-                            style={{ background: '#8A0538', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, color: 'white', fontSize: 12, fontWeight: 600 }}
+                            className="btn-icon btn-icon--primary"
                           >
                             <FileText size={13} /> PDF
                           </button>
@@ -222,7 +205,7 @@ export function Relatorios() {
                             target="_blank"
                             rel="noreferrer"
                             title="Download PDF"
-                            style={{ background: '#E5C3D0', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#8A0538', textDecoration: 'none' }}
+                            className="btn-icon btn-icon--muted"
                           >
                             <Download size={13} />
                           </a>
@@ -233,7 +216,7 @@ export function Relatorios() {
                 })}
                 {!data?.docentes?.length && (
                   <tr>
-                    <td colSpan={6} style={{ padding: 40, textAlign: 'center', color: '#787878' }}>
+                    <td colSpan={6} className="data-table-empty">
                       Nenhum docente encontrado com os filtros aplicados.
                     </td>
                   </tr>
@@ -242,19 +225,16 @@ export function Relatorios() {
             </table>
           </div>
 
-          {/* Paginação */}
           {data && data.totalPaginas > 1 && (
-            <div style={{ padding: '12px 16px', borderTop: '1px solid #E4E4E4', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 13, color: '#787878' }}>
+            <div className="pagination">
+              <span className="pagination-info">
                 {data.total} docentes · Página {data.pagina} de {data.totalPaginas}
               </span>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1}
-                  style={{ padding: '6px 12px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white', display: 'flex', alignItems: 'center' }}>
+              <div className="pagination-controls">
+                <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1} className="pagination-btn">
                   <ChevronLeft size={15} />
                 </button>
-                <button onClick={() => setPagina(p => Math.min(data.totalPaginas, p + 1))} disabled={pagina === data.totalPaginas}
-                  style={{ padding: '6px 12px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white', display: 'flex', alignItems: 'center' }}>
+                <button onClick={() => setPagina(p => Math.min(data.totalPaginas, p + 1))} disabled={pagina === data.totalPaginas} className="pagination-btn">
                   <ChevronRight size={15} />
                 </button>
               </div>

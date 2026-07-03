@@ -32,7 +32,7 @@ export function Painel() {
     return (
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: 0 }}>Painel</h1>
+          <h1 className="page-title">Painel</h1>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
           {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -44,12 +44,12 @@ export function Painel() {
   if (!data || data.totalDocentes === 0) {
     return (
       <div>
-        <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: '0 0 24px' }}>Painel</h1>
+        <h1 className="page-title" style={{ marginBottom: 24 }}>Painel</h1>
         <Card style={{ textAlign: 'center', padding: 48 }}>
           <AlertTriangle size={48} color="#FAAD14" style={{ margin: '0 auto 16px' }} />
-          <h2 style={{ fontFamily: 'Poppins, sans-serif', color: '#1E1E1E', margin: '0 0 8px' }}>Nenhum dado processado</h2>
+          <h2 style={{ color: '#1E1E1E', margin: '0 0 8px' }}>Nenhum dado processado</h2>
           <p style={{ color: '#787878', marginBottom: 24 }}>Acesse a página de Relatórios para processar a planilha.</p>
-          <a href="/relatorios" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex' }}>Ir para Relatórios</a>
+          <a href="/relatorios" className="btn-primary">Ir para Relatórios</a>
         </Card>
       </div>
     );
@@ -57,15 +57,14 @@ export function Painel() {
 
   return (
     <div className="animate-fadeIn">
-      {/* Título */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div className="page-header">
         <div>
-          <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: 0 }}>Painel</h1>
-          <p style={{ color: '#787878', margin: '4px 0 0', fontSize: 13 }}>
+          <h1 className="page-title">Painel</h1>
+          <p className="page-subtitle">
             Última atualização: {formatarData(data.ultimaAtualizacao)} · {data.arquivoProcessado}
           </p>
         </div>
-        <button onClick={() => refetch()} className="btn-secondary" disabled={isFetching} style={{ height: 40, padding: '0 16px', fontSize: 13 }}>
+        <button onClick={() => refetch()} className="btn-secondary btn-sm" disabled={isFetching}>
           <RefreshCw size={15} className={isFetching ? 'animate-spin' : ''} />
           {isFetching ? 'Atualizando...' : 'Atualizar'}
         </button>
@@ -83,10 +82,8 @@ export function Painel() {
       {/* Gráficos linha 1 */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         {/* Progresso por semana */}
-        <Card style={{ padding: 20 }}>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
-            PROGRESSO POR SEMANA
-          </h3>
+        <Card className="card--p-lg">
+          <h3 className="card-section-title">PROGRESSO POR SEMANA</h3>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={data.porSemana} barCategoryGap="30%">
               <CartesianGrid strokeDasharray="3 3" stroke="#E4E4E4" vertical={false} />
@@ -122,10 +119,8 @@ export function Painel() {
         </Card>
 
         {/* Distribuição de tipos */}
-        <Card style={{ padding: 20 }}>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
-            TIPOS DE PENDÊNCIA
-          </h3>
+        <Card className="card--p-lg">
+          <h3 className="card-section-title">TIPOS DE PENDÊNCIA</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
@@ -153,22 +148,20 @@ export function Painel() {
       {/* Gráficos linha 2 */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         {/* Por campus */}
-        <Card style={{ padding: 20 }}>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
-            PENDENTES POR CAMPUS
-          </h3>
+        <Card className="card--p-lg">
+          <h3 className="card-section-title">PENDENTES POR CAMPUS</h3>
           {(() => {
             const totalCampus = data.porCampus.slice(0, 5).reduce((s, d) => s + d.total, 0) || 1;
             return data.porCampus.slice(0, 5).map((item, i) => {
               const pct = Math.max(Math.round((item.total / totalCampus) * 100), 2);
               return (
                 <div key={i} style={{ marginBottom: 14 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                  <div className="flex justify-between" style={{ marginBottom: 5 }}>
                     <span style={{ fontSize: 13, color: '#404040', fontWeight: 500 }}>{item.campus}</span>
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#8A0538' }}>{item.total}</span>
                   </div>
-                  <div style={{ backgroundColor: '#E4E4E4', borderRadius: 6, height: 10 }}>
-                    <div style={{ width: `${pct}%`, height: '100%', backgroundColor: '#8A0538', borderRadius: 6, transition: 'width 0.6s ease' }} />
+                  <div className="progress-bar-track">
+                    <div className="progress-bar-fill" style={{ width: `${pct}%`, backgroundColor: '#8A0538' }} />
                   </div>
                 </div>
               );
@@ -177,10 +170,8 @@ export function Painel() {
         </Card>
 
         {/* Status TACH */}
-        <Card style={{ padding: 20 }}>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 14, color: '#8A0538', margin: '0 0 16px', borderLeft: '3px solid #8A0538', paddingLeft: 10 }}>
-            DISTRIBUIÇÃO STATUS TACH
-          </h3>
+        <Card className="card--p-lg">
+          <h3 className="card-section-title">DISTRIBUIÇÃO STATUS TACH</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {(() => {
               const totalTach = data.statusTachDistribuicao.slice(0, 6).reduce((s, d) => s + d.total, 0) || 1;
@@ -189,12 +180,12 @@ export function Painel() {
                 const cor = CORES_TACH[item.status] || '#787878';
                 return (
                   <div key={i}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                    <div className="flex justify-between" style={{ marginBottom: 5 }}>
                       <span style={{ fontSize: 12, color: '#404040' }}>{item.status}</span>
                       <span style={{ fontSize: 12, fontWeight: 700, color: cor }}>{item.total}</span>
                     </div>
-                    <div style={{ backgroundColor: '#E4E4E4', borderRadius: 6, height: 10 }}>
-                      <div style={{ width: `${pct}%`, height: '100%', backgroundColor: cor, borderRadius: 6, transition: 'width 0.6s ease' }} />
+                    <div className="progress-bar-track">
+                      <div className="progress-bar-fill" style={{ width: `${pct}%`, backgroundColor: cor }} />
                     </div>
                   </div>
                 );

@@ -42,22 +42,23 @@ export function RevisarRelatorio() {
 
   return (
     <div className="animate-fadeIn">
-      <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: '0 0 6px' }}>Revisar Relatório</h1>
-      <p style={{ color: '#787878', margin: '0 0 24px', fontSize: 13 }}>Visualize e confira os dados de cada docente antes de gerar o PDF</p>
+      <h1 className="page-title" style={{ marginBottom: 6 }}>Revisar Relatório</h1>
+      <p className="page-subtitle" style={{ marginBottom: 24 }}>Visualize e confira os dados de cada docente antes de gerar o PDF</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 16, height: 'calc(100vh - 220px)', minHeight: 500 }}>
         {/* Lista lateral */}
-        <Card style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Card className="card--no-pad card--flex-col card--overflow">
           <div style={{ padding: '16px', borderBottom: '1px solid #E4E4E4' }}>
-            <div style={{ position: 'relative' }}>
-              <Search size={14} color="#787878" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+            <div className="form-control-wrapper">
+              <Search size={14} className="form-icon" />
               <input
                 type="text"
                 placeholder="Buscar docente..."
                 value={busca}
                 onChange={e => setBusca(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && setBuscaAtiva(busca)}
-                style={{ width: '100%', padding: '8px 12px 8px 32px', border: '1px solid #E4E4E4', borderRadius: 6, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
+                className="form-control"
+                style={{ fontSize: 13 }}
               />
             </div>
             {buscaAtiva && (
@@ -105,45 +106,43 @@ export function RevisarRelatorio() {
           ) : (
             <>
               {/* Cabeçalho do docente */}
-              <Card style={{ padding: '16px 20px' }}>
+              <Card className="card--p-md">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                   <div>
-                    <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 18, color: '#8A0538', margin: '0 0 4px' }}>{docenteAtual.nomeDocente}</h2>
+                    <h2 style={{ fontWeight: 700, fontSize: 18, color: '#8A0538', margin: '0 0 4px' }}>{docenteAtual.nomeDocente}</h2>
                     <p style={{ color: '#787878', margin: 0, fontSize: 13 }}>Matrícula: {docenteAtual.matricula} · {docenteAtual.campus}</p>
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <button onClick={() => navegar('anterior')} disabled={indiceAtual === 0} style={{ padding: '6px 10px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white' }}>
+                    <button onClick={() => navegar('anterior')} disabled={indiceAtual === 0} className="pagination-btn">
                       <ChevronLeft size={15} />
                     </button>
                     <span style={{ fontSize: 12, color: '#787878' }}>{indiceAtual + 1}/{docentes.length}</span>
-                    <button onClick={() => navegar('proximo')} disabled={indiceAtual === docentes.length - 1} style={{ padding: '6px 10px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white' }}>
+                    <button onClick={() => navegar('proximo')} disabled={indiceAtual === docentes.length - 1} className="pagination-btn">
                       <ChevronRight size={15} />
                     </button>
                     <button onClick={() => gerarPDFMut.mutate(docenteAtual.matricula)} disabled={gerarPDFMut.isPending}
-                      className="btn-primary" style={{ height: 36, padding: '0 14px', fontSize: 13 }}>
+                      className="btn-primary btn-xs">
                       {gerarPDFMut.isPending ? <RefreshCw size={13} className="animate-spin" /> : <FileText size={13} />}
                       Gerar PDF
                     </button>
                     <a href={relatoriosAPI.getDownloadUrl(`${docenteAtual.nomeDocente.toUpperCase().replace(/\s+/g, '_')}.pdf`)}
-                      target="_blank" rel="noreferrer" className="btn-secondary" style={{ height: 36, padding: '0 12px', fontSize: 13, textDecoration: 'none' }}>
+                      target="_blank" rel="noreferrer" className="btn-secondary btn-xs">
                       <Download size={13} />
                     </a>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, padding: '4px 10px', borderRadius: 4, backgroundColor: docenteAtual.pendenciaAgenda ? '#FFE0E0' : '#EAFFD9', color: docenteAtual.pendenciaAgenda ? '#E5000C' : '#4BB218', fontWeight: 700 }}>
+                  <span className={`badge${docenteAtual.pendenciaAgenda ? ' badge--pendencia' : ' badge--ok'}`}>
                     {docenteAtual.pendenciaAgenda ? <XCircle size={13} /> : <CheckCircle size={13} />}
                     Agenda: {docenteAtual.pendenciaAgenda ? 'PENDENTE' : 'OK'}
                   </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, padding: '4px 10px', borderRadius: 4, backgroundColor: docenteAtual.pendenciaTach ? '#FFE0E0' : '#EAFFD9', color: docenteAtual.pendenciaTach ? '#E5000C' : '#4BB218', fontWeight: 700 }}>
+                  <span className={`badge${docenteAtual.pendenciaTach ? ' badge--pendencia' : ' badge--ok'}`}>
                     {docenteAtual.pendenciaTach ? <XCircle size={13} /> : <CheckCircle size={13} />}
                     TACH: {docenteAtual.pendenciaTach ? 'PENDENTE' : 'OK'}
                   </span>
                   {docenteAtual.pendenciaSimultanea && (
-                    <span style={{ fontSize: 12, padding: '4px 10px', borderRadius: 4, backgroundColor: '#E5C3D0', color: '#8A0538', fontWeight: 700 }}>
-                      SIMULTÂNEA
-                    </span>
+                    <span className="badge badge--simultanea">SIMULTÂNEA</span>
                   )}
                 </div>
               </Card>
@@ -151,16 +150,16 @@ export function RevisarRelatorio() {
               {/* Semanas */}
               <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {docenteAtual.semanas.map((semana) => (
-                  <Card key={semana.aba} style={{ padding: 16 }}>
+                  <Card key={semana.aba} className="card--p-md">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                      <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 13, color: '#8A0538', margin: 0 }}>
+                      <h3 style={{ fontWeight: 700, fontSize: 13, color: '#8A0538', margin: 0 }}>
                         {semana.semana} — ABA {semana.aba}
                       </h3>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, backgroundColor: semana.pendenciaAgenda ? '#FFE0E0' : '#EAFFD9', color: semana.pendenciaAgenda ? '#E5000C' : '#4BB218', fontWeight: 700 }}>
+                        <span className={`badge${semana.pendenciaAgenda ? ' badge--pendencia' : ' badge--ok'}`} style={{ fontSize: 11 }}>
                           {semana.resultadoAgenda}
                         </span>
-                        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, backgroundColor: semana.pendenciaTach ? '#FFE0E0' : '#EAFFD9', color: semana.pendenciaTach ? '#E5000C' : '#4BB218', fontWeight: 700 }}>
+                        <span className={`badge${semana.pendenciaTach ? ' badge--pendencia' : ' badge--ok'}`} style={{ fontSize: 11 }}>
                           {semana.resultadoTach}
                         </span>
                       </div>

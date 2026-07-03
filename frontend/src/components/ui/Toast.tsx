@@ -36,27 +36,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ mostrar }}>
       {children}
-      <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="toast-stack">
         {toasts.map(t => (
-          <div
-            key={t.id}
-            className="animate-fadeIn"
-            style={{
-              backgroundColor: BG[t.tipo],
-              border: `1px solid ${BG[t.tipo]}`,
-              borderRadius: 8,
-              padding: '12px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-              minWidth: 280,
-              maxWidth: 400,
-            }}
-          >
+          <div key={t.id} className={`toast toast--${t.tipo} animate-fadeIn`}>
             {ICONS[t.tipo]}
-            <span style={{ fontSize: 14, fontFamily: 'Source Sans 3, sans-serif', flex: 1, color: '#1E1E1E' }}>{t.mensagem}</span>
-            <button onClick={() => remover(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2 }}>
+            <span className="toast__msg">{t.mensagem}</span>
+            <button onClick={() => remover(t.id)} className="toast__close">
               <X size={14} color="#787878" />
             </button>
           </div>

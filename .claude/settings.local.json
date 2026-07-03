@@ -11,7 +11,9 @@
       "Bash(cmd.exe /c \"node --version\")",
       "Bash(powershell.exe -Command \"Set-Location 'c:\\\\Users\\\\diogo.jooliveira\\\\Grupo Marista\\\\Diretório Controle Acadêmico - Documentos\\\\10_Analistas\\\\10.10_Diogo\\\\3 - Automações\\\\4 - Pendencias_Agenda_E_TACH\\\\backend'; node --version; npm --version\")",
       "Bash(powershell.exe -Command ' *)",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(ls \"C:\\\\Users\\\\diogo.jooliveira\\\\Downloads\\\\claude-cookbooks-main\\\\claude-cookbooks-main\" 2>/dev/null || echo \"DIRECTORY NOT FOUND\")",
+      "Read(//c/Users/diogo.jooliveira/Downloads/claude-cookbooks-main/claude-cookbooks-main/**)"
     ]
   }
 }

@@ -41,40 +41,37 @@ export function TodosRelatorios() {
 
   return (
     <div className="animate-fadeIn">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+      <div className="page-header">
         <div>
-          <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: 0 }}>Todos os Relatórios</h1>
-          <p style={{ color: '#787878', margin: '4px 0 0', fontSize: 13 }}>Central de gerenciamento de PDFs gerados · {data?.total || 0} arquivo(s)</p>
+          <h1 className="page-title">Todos os Relatórios</h1>
+          <p className="page-subtitle">Central de gerenciamento de PDFs gerados · {data?.total || 0} arquivo(s)</p>
         </div>
-        <a
-          href={relatoriosAPI.getZipUrl()}
-          className="btn-primary"
-          style={{ textDecoration: 'none', height: 42, padding: '0 16px', fontSize: 13 }}
-        >
+        <a href={relatoriosAPI.getZipUrl()} className="btn-primary btn-sm">
           <Archive size={15} /> Baixar Tudo (ZIP)
         </a>
       </div>
 
       {/* Busca */}
-      <Card style={{ marginBottom: 16, padding: '14px 20px' }}>
+      <Card className="card--p-sm" style={{ marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ flex: 1, position: 'relative' }}>
-            <Search size={15} color="#787878" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+          <div className="form-control-wrapper" style={{ flex: 1 }}>
+            <Search size={15} className="form-icon" />
             <input
               type="text"
               placeholder="Buscar por nome do arquivo..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && (setBuscaAtiva(busca), setPagina(1))}
-              style={{ width: '100%', padding: '8px 12px 8px 32px', border: '1px solid #E4E4E4', borderRadius: 6, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+              className="form-control"
             />
           </div>
-          <button className="btn-primary" onClick={() => { setBuscaAtiva(busca); setPagina(1); }} style={{ height: 38, padding: '0 16px', fontSize: 13 }}>
-            Buscar
-          </button>
+          <button className="btn-primary btn-sm" onClick={() => { setBuscaAtiva(busca); setPagina(1); }}>Buscar</button>
           {buscaAtiva && (
-            <button onClick={() => { setBusca(''); setBuscaAtiva(''); setPagina(1); }}
-              style={{ height: 38, padding: '0 12px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white', fontSize: 13, color: '#787878' }}>
+            <button
+              onClick={() => { setBusca(''); setBuscaAtiva(''); setPagina(1); }}
+              className="pagination-btn"
+              style={{ fontSize: 13, color: '#787878' }}
+            >
               Limpar
             </button>
           )}
@@ -87,32 +84,25 @@ export function TodosRelatorios() {
       ) : relatorios.length === 0 ? (
         <Card style={{ textAlign: 'center', padding: 48 }}>
           <FileText size={48} color="#E4E4E4" style={{ margin: '0 auto 16px' }} />
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', color: '#787878', margin: '0 0 8px' }}>Nenhum relatório gerado</h3>
+          <h3 style={{ color: '#787878', margin: '0 0 8px' }}>Nenhum relatório gerado</h3>
           <p style={{ color: '#787878', margin: 0 }}>Acesse Relatórios para gerar PDFs dos docentes.</p>
         </Card>
       ) : (
-        <div style={{ backgroundColor: 'white', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+        <div className="data-table-wrapper">
+          <table className="data-table">
             <thead>
-              <tr style={{ backgroundColor: '#8A0538' }}>
+              <tr>
                 {['#', 'Nome do Arquivo', 'Tamanho', 'Gerado em', 'Ações'].map(h => (
-                  <th key={h} style={{ padding: '12px 16px', color: 'white', textAlign: 'left', fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 12 }}>{h}</th>
+                  <th key={h}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {relatorios.map((r, i) => (
-                <tr
-                  key={r.nomeArquivo}
-                  style={{ backgroundColor: i % 2 === 0 ? '#FAFAFA' : 'white', borderBottom: '1px solid #E4E4E4' }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F0F2F2')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = i % 2 === 0 ? '#FAFAFA' : 'white')}
-                >
-                  <td style={{ padding: '12px 16px', color: '#787878', fontWeight: 600, width: 50 }}>
-                    {(pagina - 1) * 15 + i + 1}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontWeight: 600, color: '#1E1E1E' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <tr key={r.nomeArquivo}>
+                  <td style={{ color: '#787878', fontWeight: 600, width: 50 }}>{(pagina - 1) * 15 + i + 1}</td>
+                  <td style={{ fontWeight: 600, color: '#1E1E1E' }}>
+                    <div className="flex items-center gap-2">
                       <FileText size={15} color="#8A0538" />
                       <span style={{ maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
                         {r.nomeArquivo.replace('.pdf', '').replace(/_/g, ' ')}
@@ -120,34 +110,21 @@ export function TodosRelatorios() {
                     </div>
                     <div style={{ fontSize: 11, color: '#787878', marginTop: 2, marginLeft: 23 }}>{r.nomeArquivo}</div>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#787878', whiteSpace: 'nowrap' }}>{formatarBytes(r.tamanhoBytes)}</td>
-                  <td style={{ padding: '12px 16px', color: '#787878', fontSize: 13, whiteSpace: 'nowrap' }}>{formatarData(r.geradoEm)}</td>
-                  <td style={{ padding: '12px 16px' }}>
+                  <td style={{ color: '#787878', whiteSpace: 'nowrap' }}>{formatarBytes(r.tamanhoBytes)}</td>
+                  <td style={{ color: '#787878', fontSize: 13, whiteSpace: 'nowrap' }}>{formatarData(r.geradoEm)}</td>
+                  <td>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <a
-                        href={relatoriosAPI.getVisualizarUrl(r.nomeArquivo)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Abrir PDF"
-                        style={{ padding: '6px 10px', border: '1px solid #8A0538', borderRadius: 6, cursor: 'pointer', background: '#8A0538', display: 'flex', alignItems: 'center', color: 'white', textDecoration: 'none' }}
-                      >
+                      <a href={relatoriosAPI.getVisualizarUrl(r.nomeArquivo)} target="_blank" rel="noopener noreferrer"
+                        title="Abrir PDF" className="btn-icon btn-icon--outline">
                         <ExternalLink size={13} />
                       </a>
-                      <a
-                        href={relatoriosAPI.getDownloadUrl(r.nomeArquivo)}
-                        download
-                        title="Download"
-                        style={{ padding: '6px 10px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: '#F5F5F5', display: 'flex', alignItems: 'center', color: '#404040', textDecoration: 'none' }}
-                      >
+                      <a href={relatoriosAPI.getDownloadUrl(r.nomeArquivo)} download title="Download"
+                        className="btn-icon btn-icon--dl">
                         <Download size={13} />
                       </a>
                       <button
-                        onClick={() => {
-                          if (confirm(`Excluir "${r.nomeArquivo}"?`)) excluirMut.mutate(r.nomeArquivo);
-                        }}
-                        title="Excluir"
-                        style={{ padding: '6px 10px', border: '1px solid #FFE0E0', borderRadius: 6, cursor: 'pointer', background: '#FFE0E0', display: 'flex', alignItems: 'center', color: '#E5000C' }}
-                      >
+                        onClick={() => { if (confirm(`Excluir "${r.nomeArquivo}"?`)) excluirMut.mutate(r.nomeArquivo); }}
+                        title="Excluir" className="btn-icon btn-icon--danger">
                         <Trash2 size={13} />
                       </button>
                     </div>
@@ -158,15 +135,13 @@ export function TodosRelatorios() {
           </table>
 
           {data && data.totalPaginas > 1 && (
-            <div style={{ padding: '12px 16px', borderTop: '1px solid #E4E4E4', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 13, color: '#787878' }}>{data.total} arquivos · Página {data.pagina} de {data.totalPaginas}</span>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1}
-                  style={{ padding: '6px 12px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white' }}>
+            <div className="pagination">
+              <span className="pagination-info">{data.total} arquivos · Página {data.pagina} de {data.totalPaginas}</span>
+              <div className="pagination-controls">
+                <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1} className="pagination-btn">
                   <ChevronLeft size={15} />
                 </button>
-                <button onClick={() => setPagina(p => Math.min(data.totalPaginas, p + 1))} disabled={pagina === data.totalPaginas}
-                  style={{ padding: '6px 12px', border: '1px solid #E4E4E4', borderRadius: 6, cursor: 'pointer', background: 'white' }}>
+                <button onClick={() => setPagina(p => Math.min(data.totalPaginas, p + 1))} disabled={pagina === data.totalPaginas} className="pagination-btn">
                   <ChevronRight size={15} />
                 </button>
               </div>

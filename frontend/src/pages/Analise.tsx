@@ -10,9 +10,9 @@ interface SecaoProps {
 function Secao({ titulo, icon, children }: SecaoProps) {
   return (
     <Card style={{ marginBottom: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, paddingBottom: 12, borderBottom: '2px solid #8A0538' }}>
-        <div style={{ color: '#8A0538' }}>{icon}</div>
-        <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 16, color: '#8A0538', margin: 0 }}>{titulo}</h2>
+      <div className="card-section-header">
+        {icon}
+        <h2>{titulo}</h2>
       </div>
       {children}
     </Card>
@@ -22,8 +22,8 @@ function Secao({ titulo, icon, children }: SecaoProps) {
 export function Analise() {
   return (
     <div className="animate-fadeIn">
-      <h1 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 24, color: '#8A0538', margin: '0 0 6px' }}>Análise</h1>
-      <p style={{ color: '#787878', margin: '0 0 24px', fontSize: 13 }}>Regras de negócio, fluxo de processamento e explicação dos dashboards</p>
+      <h1 className="page-title" style={{ marginBottom: 6 }}>Análise</h1>
+      <p className="page-subtitle" style={{ marginBottom: 24 }}>Regras de negócio, fluxo de processamento e explicação dos dashboards</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div>
@@ -92,12 +92,12 @@ export function Analise() {
           </Secao>
 
           <Secao titulo="Estrutura das Semanas" icon={<BarChart2 size={20} />}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="data-table" style={{ fontSize: 13 }}>
               <thead>
-                <tr style={{ backgroundColor: '#8A0538' }}>
-                  <th style={{ padding: '8px 12px', color: 'white', textAlign: 'left' }}>Semana</th>
-                  <th style={{ padding: '8px 12px', color: 'white', textAlign: 'left' }}>Aba</th>
-                  <th style={{ padding: '8px 12px', color: 'white', textAlign: 'left' }}>Período</th>
+                <tr>
+                  <th>Semana</th>
+                  <th>Aba</th>
+                  <th>Período</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,11 +107,11 @@ export function Analise() {
                   ['Semana 03', '13.04', '13/04 a 17/04'],
                   ['Semana 04', '20.04', '20/04 a 24/04'],
                   ['Semana 05', '27.04', '27/04 a 30/04'],
-                ].map(([sem, aba, per], i) => (
-                  <tr key={sem} style={{ backgroundColor: i % 2 === 0 ? '#FAFAFA' : 'white' }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#8A0538' }}>{sem}</td>
-                    <td style={{ padding: '8px 12px', fontFamily: 'monospace', color: '#404040' }}>{aba}</td>
-                    <td style={{ padding: '8px 12px', color: '#404040' }}>{per}</td>
+                ].map(([sem, aba, per]) => (
+                  <tr key={sem}>
+                    <td style={{ fontWeight: 600, color: '#8A0538', padding: '8px 12px' }}>{sem}</td>
+                    <td style={{ fontFamily: 'monospace', color: '#404040', padding: '8px 12px' }}>{aba}</td>
+                    <td style={{ color: '#404040', padding: '8px 12px' }}>{per}</td>
                   </tr>
                 ))}
               </tbody>
