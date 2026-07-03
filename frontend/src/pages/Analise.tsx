@@ -42,12 +42,12 @@ export function Analise() {
         <div>
           <Secao titulo="Regras de Negócio" icon={<BookOpen size={20} />}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ backgroundColor: '#FAFAFA', borderRadius: 8, padding: 16, borderLeft: '4px solid #8A0538' }}>
+              <div style={{ backgroundColor: '#FAFAFA', borderRadius: 8, padding: 16 }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#1E1E1E', margin: '0 0 6px' }}>Identificação do Docente</h4>
                 <p style={{ fontSize: 13, color: '#404040', margin: 0 }}>A <strong>matrícula</strong> é o identificador único de cada docente. Não há duplicidade — cada matrícula representa um único profissional consolidado entre todas as semanas.</p>
               </div>
 
-              <div style={{ backgroundColor: '#FFE0E0', borderRadius: 8, padding: 16, borderLeft: '4px solid #E5000C' }}>
+              <div style={{ backgroundColor: '#FFE0E0', borderRadius: 8, padding: 16 }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#8A0538', margin: '0 0 8px' }}>Pendência de Agenda</h4>
                 <div style={{ backgroundColor: '#8A0538', borderRadius: 6, padding: '8px 12px', marginBottom: 8, fontFamily: 'monospace', fontSize: 13, color: 'white', textAlign: 'center' }}>
                   Horas a Alocar &gt; 0
@@ -73,7 +73,7 @@ export function Analise() {
                 </table>
               </div>
 
-              <div style={{ backgroundColor: '#FFFDD9', borderRadius: 8, padding: 16, borderLeft: '4px solid #FAAD14' }}>
+              <div style={{ backgroundColor: '#FFFDD9', borderRadius: 8, padding: 16 }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#1E1E1E', margin: '0 0 6px' }}>Pendências de TACH</h4>
                 <p style={{ fontSize: 12, color: '#404040', margin: '0 0 8px' }}>São exibidos apenas os seguintes status (excluindo APROVADO e AGUARDANDO APROVAÇÃO):</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -85,7 +85,7 @@ export function Analise() {
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#E5C3D0', borderRadius: 8, padding: 16, borderLeft: '4px solid #8A0538' }}>
+              <div style={{ backgroundColor: '#E5C3D0', borderRadius: 8, padding: 16 }}>
                 <h4 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, color: '#8A0538', margin: '0 0 6px' }}>Classificação de Pendência</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {[
