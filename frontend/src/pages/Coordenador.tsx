@@ -24,6 +24,12 @@ const TIPO_LABEL: Record<string, string> = {
   sem_pendencia:  'Sem Pendência',
 };
 
+const CAMPUS_CODIGO: Record<string, string> = {
+  'CAMPUS CURITIBA': 'CTBA',
+  'CAMPUS TOLEDO':   'TLD',
+  'CAMPUS LONDRINA': 'LDN',
+};
+
 const TIPO_COR: Record<string, string> = {
   somente_agenda: '#E67E22',
   somente_tach:   '#8A0538',
@@ -105,10 +111,15 @@ export function Coordenador() {
     [todos],
   );
 
-  const cursos = useMemo(() =>
+  const todosCursos = useMemo(() =>
     [...new Set(todos.flatMap(d => d.semanas.map(s => s.curso)).filter(Boolean))].sort(),
     [todos],
   );
+
+  const cursosFiltrados = useMemo(() => {
+    const codigo = filtroCampus ? CAMPUS_CODIGO[filtroCampus] : null;
+    return codigo ? todosCursos.filter(c => c.includes(codigo)) : todosCursos;
+  }, [todosCursos, filtroCampus]);
 
   const filtrados = useMemo(() => {
     let lista = todos;
@@ -154,6 +165,15 @@ export function Coordenador() {
 
   const rows = useMemo(() => buildRows(filtrados), [filtrados]);
 
+  const handleCampusChange = (campus: string) => {
+    setFiltroCampus(campus);
+    // Limpa o curso se ele não pertence ao novo campus
+    if (campus && filtroCurso) {
+      const codigo = CAMPUS_CODIGO[campus];
+      if (codigo && !filtroCurso.includes(codigo)) setFiltroCurso('');
+    }
+  };
+
   const limparFiltros = () => {
     setFiltroDocente('');
     setFiltroCampus('');
@@ -192,7 +212,7 @@ export function Coordenador() {
             </label>
             <select
               value={filtroCampus}
-              onChange={e => setFiltroCampus(e.target.value)}
+              onChange={e => handleCampusChange(e.target.value)}
               className="form-control"
               style={{ width: '100%' }}
             >
@@ -211,8 +231,10 @@ export function Coordenador() {
               className="form-control"
               style={{ width: '100%' }}
             >
-              <option value="">Todos os cursos</option>
-              {cursos.map(c => <option key={c} value={c}>{c}</option>)}
+              <option value="">
+                {filtroCampus ? `Cursos de ${filtroCampus}` : 'Todos os cursos'}
+              </option>
+              {cursosFiltrados.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 
