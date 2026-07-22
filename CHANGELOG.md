@@ -21,7 +21,7 @@ Formato: [versionamento semântico](https://semver.org/lang/pt-BR/) — `vMAJOR.
 
 ---
 
-## Versão atual: v1.3.1
+## Versão atual: v1.4.0
 
 | Data | Versão | Área | Resumo |
 |------|--------|------|--------|
@@ -35,4 +35,5 @@ Formato: [versionamento semântico](https://semver.org/lang/pt-BR/) — `vMAJOR.
 | 2026-07-21 | v1.2.0 | Full-stack | Fix race condition, xlsx auto-descoberta, hooks violados no Painel |
 | 2026-07-21 | v1.2.1 | Frontend | Remoção de bordas coloridas e outline do Recharts |
 | 2026-07-22 | v1.3.0 | Full-stack | TypeScript strict + correções críticas de tipos e URL de download |
-| 2026-07-22 | v1.3.1 | Backend | Fix prefixo numérico do campo Curso na leitura do Excel |
+| 2026-07-22 | v1.3.1 | Backend  | Fix prefixo numérico do campo Curso na leitura do Excel |
+| 2026-07-22 | v1.4.0 | Frontend | Nova tela Visão do Coordenador com filtros, KPIs, gráficos e exportação CSV |

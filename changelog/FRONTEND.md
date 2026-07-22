@@ -86,3 +86,17 @@ Alterações em `frontend/src/` (páginas, componentes, design system, tipos, se
 - **`PaginatedResponse<T>` eliminado** (`types/index.ts`): substituído por `PaginatedDocentes` e `PaginatedRelatorios` com campos obrigatórios e tipados corretamente (sem ambiguidade `docentes?` vs `relatorios?`).
 - **Bug de download 404 corrigido** (`Relatorios.tsx`, `RevisarRelatorio.tsx`): URLs construídas sem `_${matricula}` causavam 404 em todos os downloads individuais. Centralizado em `relatoriosAPI.getNomeArquivo(nome, matricula)` em `services/api.ts` com sanitização idêntica ao backend.
 - `strict: true` habilitado em `frontend/tsconfig.json`.
+
+---
+
+## [v1.4.0] — 2026-07-22 · MINOR
+
+### Adicionado — Visão do Coordenador
+- Nova tela `/coordenador` acessível pelo menu lateral (grupo "COORDENAÇÃO").
+- Filtros client-side por **campus**, **curso** e **nome/matrícula do docente** — sem requisições adicionais ao backend.
+- **6 KPI cards** com borda colorida superior: Total, Com Pendência (%), Simultânea, Somente Agenda, Somente TACH, Sem Pendência.
+- **Gráfico donut** — distribuição por tipo de pendência com tooltip de percentual.
+- **Gráfico de barras agrupado** — pendências de Agenda e TACH por semana.
+- **Tabela paginada** com matrícula, nome, campus, curso, badge de tipo e contagem de semanas pendentes.
+- Botão **Exportar CSV** com BOM UTF-8 (compatível com Excel).
+- Botão **"Ver"** na tabela navega para `/revisar` (tela de detalhamento do docente).

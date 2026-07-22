@@ -7,6 +7,7 @@ import { Relatorios } from './pages/Relatorios';
 import { RevisarRelatorio } from './pages/RevisarRelatorio';
 import { TodosRelatorios } from './pages/TodosRelatorios';
 import { Analise } from './pages/Analise';
+import { Coordenador } from './pages/Coordenador';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,7 @@ export default function App() {
               <Route path="/revisar" element={<RevisarRelatorio />} />
               <Route path="/todos-relatorios" element={<TodosRelatorios />} />
               <Route path="/analise" element={<Analise />} />
+              <Route path="/coordenador" element={<Coordenador />} />
             </Route>
           </Routes>
         </BrowserRouter>

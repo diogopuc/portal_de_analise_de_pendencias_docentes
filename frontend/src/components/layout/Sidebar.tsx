@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, Eye, FolderOpen, BarChart2, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, FileText, Eye, FolderOpen, BarChart2, ChevronRight, GraduationCap } from 'lucide-react';
 
 interface SidebarProps {
   aberta: boolean;
@@ -14,6 +14,10 @@ const navItems = [
       { to: '/revisar', label: 'Revisar Relatório', icon: Eye },
       { to: '/todos-relatorios', label: 'Todos os Relatórios', icon: FolderOpen },
     ],
+  },
+  {
+    grupo: 'COORDENAÇÃO',
+    items: [{ to: '/coordenador', label: 'Visão do Coordenador', icon: GraduationCap }],
   },
   { grupo: 'SAIBA MAIS', items: [{ to: '/analise', label: 'Análise', icon: BarChart2 }] },
 ];
