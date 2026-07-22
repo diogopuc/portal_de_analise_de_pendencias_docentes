@@ -70,7 +70,7 @@ export class ExcelPlanilhaReader {
         const chContrato   = parseFloat(String(row[colCH]    || '0').replace(',', '.')) || 0;
         const horasAlocar  = parseFloat(String(row[colHoras] || '0').replace(',', '.')) || 0;
         const campus       = String(row[colCampus]    || '').trim();
-        const curso        = String(row[colCurso]     || '').trim();
+        const curso        = String(row[colCurso]     || '').trim().replace(/^\d+\s*-\s*/, '');
         const geraAgenda   = String(row[colGeraAgenda] || '').trim();
 
         const statusPorDia: StatusPorDia[] = colsStatus
