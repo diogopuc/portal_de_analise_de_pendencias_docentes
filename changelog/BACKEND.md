@@ -78,3 +78,26 @@ Alterações em `backend/src/` (rotas, entidades, readers, generators, config).
 
 ### Corrigido
 - **Prefixo numérico do curso** (`ExcelPlanilhaReader.ts`): a planilha armazena o curso como `{CÓDIGO} - {NOME}` (ex: `4093 - DIREITO - ADM - CTBA`). O prefixo numérico é agora removido na leitura com `/^\d+\s*-\s*/`, armazenando apenas o nome descritivo.
+
+---
+
+## [v1.4.0] — 2026-07-22 · MINOR
+
+### Adicionado — Infraestrutura backend para 6 funcionalidades
+
+#### Config dinâmica
+- `semanas.config.ts`: refatorado com `lerConfig()` (lê `data/semanas.config.json`) e `salvarConfig()`. Exportações estáticas mantidas para compatibilidade.
+- `ExcelPlanilhaReader.ts` e `ObterDashboardUseCase.ts`: passaram a chamar `lerConfig()` a cada execução — alterações de config têm efeito sem restart.
+- `routes/config.ts` (novo): `GET /api/config/semanas` e `PUT /api/config/semanas`.
+
+#### Snapshots / Histórico
+- `ProcessarPlanilhaUseCase.ts`: salva snapshot JSON em `data/historico/{timestamp}.json` após cada processamento bem-sucedido.
+- `routes/historico.ts` (novo): `GET /api/historico`, `GET /api/historico/:file`, `GET /api/historico/comparar?de=&para=` (compara dois snapshots e retorna `regularizados`, `novasPendencias`, `delta`).
+
+#### Excel consolidado
+- `routes/docentes.ts`: `GET /api/docentes/exportar-excel` — gera `.xlsx` com ExcelJS filtrado por campus, curso, tipoPendencia, busca. Cabeçalho estilizado com `#8A0538`.
+
+#### E-mail
+- `nodemailer` instalado.
+- `routes/email.ts` (novo): `POST /api/email/enviar` — lê configuração SMTP de variáveis de ambiente (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`), anexa o PDF do docente e envia.
+- `index.ts`: rotas `/api/config`, `/api/historico` e `/api/email` registradas. `HISTORICO_DIR` criado no boot.

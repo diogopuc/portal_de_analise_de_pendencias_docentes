@@ -1,0 +1,206 @@
+{
+  "id": "2026-07-22T20:33:33.582Z",
+  "timestamp": "2026-07-22T20:33:33.582Z",
+  "arquivo": "4 - Atv. Pendentes - Junho.xlsx",
+  "totalDocentes": 32,
+  "porTipo": {
+    "somente_agenda": 5,
+    "somente_tach": 6,
+    "simultanea": 15,
+    "sem_pendencia": 6
+  },
+  "docentes": [
+    {
+      "matricula": 8306,
+      "nome": "ADALBERTO CARAMORI PETRY",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 29942,
+      "nome": "ALINE TANCLER STIPP",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 90013836,
+      "nome": "ANA LUIZA CHALUSNHAK",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90009703,
+      "nome": "ANDERSON NITSCHE",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90014229,
+      "nome": "ANDRE LUIZ DE SOUZA PAULA",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 20244,
+      "nome": "CAMILA AMENT GIULIANI DOS SANTOS FRANCO",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 90014322,
+      "nome": "CARINA FERNANDA MATTEDI",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 90005226,
+      "nome": "CESAR RIBEIRO ZUCCOLI",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "somente_agenda"
+    },
+    {
+      "matricula": 19800,
+      "nome": "CLAUDIA MARIA BORGES COSTA PINTO",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 90013955,
+      "nome": "EMILE FERNANDES SPINASSI TEIXEIRA",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_agenda"
+    },
+    {
+      "matricula": 90010315,
+      "nome": "FERNANDA CATAFESTA UTZUMI",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90003306,
+      "nome": "HORACIO ALVARENGA MOREIRA",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 23702,
+      "nome": "HUMBERTO MACIEL FRANCA MADEIRA",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90003308,
+      "nome": "ISABELA MAYUMI NAKANISHI TAKAKI",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 90013903,
+      "nome": "JACKSON LUIS SCHIRIGATTI",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 90003039,
+      "nome": "JAMILE DA COSTA RIECHI",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 90013958,
+      "nome": "JEFERSON DA COSTA VAZ",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90002614,
+      "nome": "JOACHIM ANDRADE",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "sem_pendencia"
+    },
+    {
+      "matricula": 90002589,
+      "nome": "JOSE EDUARDO NUNES LINO",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 90005652,
+      "nome": "JULIANA CONCEICAO NOSCHANG DA COSTA",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_agenda"
+    },
+    {
+      "matricula": 4717,
+      "nome": "LUIZ ALBERTO BLANCHET",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 90001409,
+      "nome": "LUIZ CARLOS CANTANHEDE FERNANDES JUNIOR",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90009989,
+      "nome": "MANOEL VALERIO DA SILVEIRA NETO",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_agenda"
+    },
+    {
+      "matricula": 90012360,
+      "nome": "MANUELA TORRADO TRUITI",
+      "campus": "CAMPUS TOLEDO",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90004950,
+      "nome": "MARCO CESAR JORGE DOS SANTOS",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90010258,
+      "nome": "MARIA AUGUSTA NASCIMENTO HEIM",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 3363,
+      "nome": "MARILENA INDIRA WINTER",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "somente_agenda"
+    },
+    {
+      "matricula": 90003767,
+      "nome": "MONICA REGINA DE MATOS",
+      "campus": "CAMPUS TOLEDO",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90010292,
+      "nome": "PRISCILA BEATRIZ DE SOUZA MEDEIROS",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 32701,
+      "nome": "RENATA DINARDI BORGES LIBONI",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "somente_tach"
+    },
+    {
+      "matricula": 31303,
+      "nome": "RICARDO BERNARDO DA SILVA",
+      "campus": "CAMPUS LONDRINA",
+      "tipo": "simultanea"
+    },
+    {
+      "matricula": 90010954,
+      "nome": "RUI BOCCHINO MACEDO",
+      "campus": "CAMPUS CURITIBA",
+      "tipo": "simultanea"
+    }
+  ]
+}

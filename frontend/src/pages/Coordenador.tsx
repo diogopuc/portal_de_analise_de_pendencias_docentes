@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts';
-import { Search, Users, AlertCircle, BookOpen, CheckCircle, Eye, Download } from 'lucide-react';
+import { Search, Eye, Download, FileSpreadsheet } from 'lucide-react';
 import { docentesAPI } from '../services/api';
 
 const CORES = {
@@ -97,6 +97,7 @@ export function Coordenador() {
   const [filtroDocente, setFiltroDocente] = useState('');
   const [filtroCampus, setFiltroCampus]   = useState('');
   const [filtroCurso, setFiltroCurso]     = useState('');
+  const [filtroTipo, setFiltroTipo]       = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['coordenador'],
@@ -125,6 +126,7 @@ export function Coordenador() {
     let lista = todos;
     if (filtroCampus) lista = lista.filter(d => d.campus === filtroCampus);
     if (filtroCurso)  lista = lista.filter(d => d.semanas.some(s => s.curso === filtroCurso));
+    if (filtroTipo)   lista = lista.filter(d => d.tipoPendencia === filtroTipo);
     if (filtroDocente) {
       const norm = filtroDocente.toLowerCase();
       lista = lista.filter(d =>
@@ -132,7 +134,7 @@ export function Coordenador() {
       );
     }
     return lista;
-  }, [todos, filtroCampus, filtroCurso, filtroDocente]);
+  }, [todos, filtroCampus, filtroCurso, filtroTipo, filtroDocente]);
 
   const kpis = useMemo(() => ({
     total:      filtrados.length,
@@ -178,9 +180,20 @@ export function Coordenador() {
     setFiltroDocente('');
     setFiltroCampus('');
     setFiltroCurso('');
+    setFiltroTipo('');
   };
 
-  const temFiltro = filtroCampus || filtroCurso || filtroDocente;
+  const temFiltro = filtroCampus || filtroCurso || filtroDocente || filtroTipo;
+
+  const exportarExcel = () => {
+    const url = docentesAPI.getExportarExcelUrl({
+      campus:        filtroCampus || undefined,
+      curso:         filtroCurso  || undefined,
+      tipoPendencia: filtroTipo   || undefined,
+      busca:         filtroDocente || undefined,
+    });
+    window.open(url, '_blank');
+  };
 
   return (
     <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -193,14 +206,24 @@ export function Coordenador() {
             {isLoading ? 'Carregando dados...' : `${todos.length} docentes carregados · ${filtrados.length} exibidos`}
           </p>
         </div>
-        <button
-          onClick={() => exportarCSV(rows)}
-          disabled={rows.length === 0}
-          className="btn-secondary"
-          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-        >
-          <Download size={14} /> Exportar CSV
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={exportarExcel}
+            disabled={rows.length === 0}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <FileSpreadsheet size={14} /> Exportar Excel
+          </button>
+          <button
+            onClick={() => exportarCSV(rows)}
+            disabled={rows.length === 0}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <Download size={14} /> Exportar CSV
+          </button>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -235,6 +258,24 @@ export function Coordenador() {
                 {filtroCampus ? `Cursos de ${filtroCampus}` : 'Todos os cursos'}
               </option>
               {cursosFiltrados.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+
+          <div style={{ flex: '1 1 180px' }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Tipo de Pendência
+            </label>
+            <select
+              value={filtroTipo}
+              onChange={e => setFiltroTipo(e.target.value)}
+              className="form-control"
+              style={{ width: '100%' }}
+            >
+              <option value="">Todos os tipos</option>
+              <option value="simultanea">Simultânea</option>
+              <option value="somente_agenda">Somente Agenda</option>
+              <option value="somente_tach">Somente TACH</option>
+              <option value="sem_pendencia">Sem Pendência</option>
             </select>
           </div>
 

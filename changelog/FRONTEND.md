@@ -100,3 +100,30 @@ Alterações em `frontend/src/` (páginas, componentes, design system, tipos, se
 - **Tabela paginada** com matrícula, nome, campus, curso, badge de tipo e contagem de semanas pendentes.
 - Botão **Exportar CSV** com BOM UTF-8 (compatível com Excel).
 - Botão **"Ver"** na tabela navega para `/revisar` (tela de detalhamento do docente).
+
+---
+
+## [v1.5.0] — 2026-07-22 · MINOR
+
+### Adicionado — 6 novas funcionalidades
+
+#### Coordenador (expansão)
+- **Filtro por tipo de pendência** (`filtroTipo`): dropdown "Tipo de Pendência" no painel de filtros da tela Coordenador.
+- **Exportar Excel**: botão que chama `GET /api/docentes/exportar-excel` com os filtros ativos, gerando `.xlsx` estilizado.
+- Validação campus/curso: Dropdowns sincronizados via `CAMPUS_CODIGO` (`CTBA`, `TLD`, `LDN`).
+
+#### Novas telas
+- `/cursos` — **Visão por Curso**: gráfico de barras horizontal (Top 15), tabela com total, pendentes, % e distribuição por tipo para cada curso. Agrupa via `useMemo` sem requisições extras.
+- `/configuracao` — **Configuração de Mês**: formulário para editar semanas (`aba`, `semana`, `periodo`) e semanas abonadas (motivo). PUT em `/api/config/semanas`. Alerta sobre necessidade de reprocessar.
+- `/historico` — **Histórico de Evolução**: lista todos os snapshots de processamento. Seleção de dois snapshots para comparação delta: cards de variação por tipo, tabelas de regularizados e novas pendências.
+
+#### E-mail
+- Botão `<Mail>` em `RevisarRelatorio.tsx` abre modal com campos de destinatário, assunto e corpo pré-preenchidos.
+- Chama `POST /api/email/enviar` e exibe toast de sucesso/erro.
+
+#### Sidebar
+- Grupos atualizados: "COORDENAÇÃO" com 3 itens (Visão do Coordenador, Visão por Curso, Histórico de Evolução) e "CONFIGURAÇÕES" com Configuração de Mês.
+
+#### Tipos e API
+- `types/index.ts`: adicionados `SemanaConfig`, `SemanasConfigData`, `SnapshotMeta`, `ComparacaoResult`.
+- `services/api.ts`: adicionados `configAPI`, `historicoAPI`, `emailAPI` e `docentesAPI.getExportarExcelUrl()`.

@@ -101,3 +101,30 @@ export const STATUS_TACH_CORES: Record<string, string> = {
   'RASCUNHO': 'text-yellow-700 bg-yellow-50',
   'FINALIZADO': 'text-blue-700 bg-blue-50',
 };
+
+export interface SemanaConfig {
+  aba: string;
+  semana: string;
+  periodo: string;
+}
+
+export interface SemanasConfigData {
+  semanas: SemanaConfig[];
+  abonadas: Record<string, string>;
+}
+
+export interface SnapshotMeta {
+  timestamp: string;
+  arquivo: string;
+  totalDocentes: number;
+  porTipo: Record<string, number>;
+  file: string;
+}
+
+export interface ComparacaoResult {
+  antes: SnapshotMeta;
+  depois: SnapshotMeta;
+  regularizados: Docente[];
+  novasPendencias: Docente[];
+  delta: Record<string, number>;
+}

@@ -4,7 +4,7 @@ import { Docente } from '../../domain/entities/Docente';
 import { DadosSemana, StatusPorDia } from '../../domain/entities/DadosSemana';
 import { PendenciaService } from '../../domain/services/PendenciaService';
 import { IDocenteRepository } from '../../domain/repositories/IDocenteRepository';
-import { SEMANAS_CONFIG, SEMANAS_ABONADAS } from '../../config/semanas.config';
+import { lerConfig } from '../../config/semanas.config';
 
 export class ExcelPlanilhaReader {
   constructor(private readonly pendenciaService: PendenciaService) {}
@@ -32,6 +32,7 @@ export class ExcelPlanilhaReader {
     }
 
     const wb = XLSX.readFile(caminhoArquivo);
+    const { semanas: SEMANAS_CONFIG, abonadas: SEMANAS_ABONADAS } = lerConfig();
 
     for (const config of SEMANAS_CONFIG) {
       const ws = wb.Sheets[config.aba];

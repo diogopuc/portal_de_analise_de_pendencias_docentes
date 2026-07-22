@@ -1,4 +1,5 @@
 import path from 'path';
+import fs   from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { IDocenteRepository } from '../../domain/repositories/IDocenteRepository';
 import { ExcelPlanilhaReader } from '../../infrastructure/readers/ExcelPlanilhaReader';
@@ -21,6 +22,15 @@ export interface StatusProcessamento {
   arquivoProcessado?: string;
 }
 
+export interface Snapshot {
+  id: string;
+  timestamp: string;
+  arquivo: string;
+  totalDocentes: number;
+  porTipo: Record<string, number>;
+  docentes: { matricula: number; nome: string; campus: string; tipo: string }[];
+}
+
 export class ProcessarPlanilhaUseCase {
   private logs: LogEntry[] = [];
   private status: StatusProcessamento = {
@@ -34,6 +44,7 @@ export class ProcessarPlanilhaUseCase {
   constructor(
     private readonly repositorio: IDocenteRepository,
     private readonly leitor: ExcelPlanilhaReader,
+    private readonly historicoDir?: string,
   ) {}
 
   async executar(caminhoArquivo: string): Promise<void> {
@@ -49,9 +60,12 @@ export class ProcessarPlanilhaUseCase {
       this.status.ultimoProcessamento = new Date().toISOString();
       this.status.arquivoProcessado   = path.basename(caminhoArquivo);
       this.addLog('sucesso', `Planilha processada. ${this.repositorio.listarTodos().length} docentes encontrados.`);
-    } catch (err: any) {
-      this.status.erros.push(err.message);
-      this.addLog('erro', 'Erro ao processar planilha', err.message);
+
+      this.salvarSnapshot(path.basename(caminhoArquivo));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.status.erros.push(msg);
+      this.addLog('erro', 'Erro ao processar planilha', msg);
       throw err;
     } finally {
       this.status.emProcessamento = false;
@@ -59,13 +73,36 @@ export class ProcessarPlanilhaUseCase {
     }
   }
 
-  getStatus(): StatusProcessamento {
-    return this.status;
+  private salvarSnapshot(arquivo: string): void {
+    if (!this.historicoDir) return;
+    try {
+      if (!fs.existsSync(this.historicoDir)) fs.mkdirSync(this.historicoDir, { recursive: true });
+      const docentes = this.repositorio.listarTodos();
+      const snapshot: Snapshot = {
+        id: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
+        arquivo,
+        totalDocentes: docentes.length,
+        porTipo: {
+          somente_agenda: docentes.filter(d => d.tipoPendencia === 'somente_agenda').length,
+          somente_tach:   docentes.filter(d => d.tipoPendencia === 'somente_tach').length,
+          simultanea:     docentes.filter(d => d.tipoPendencia === 'simultanea').length,
+          sem_pendencia:  docentes.filter(d => d.tipoPendencia === 'sem_pendencia').length,
+        },
+        docentes: docentes.map(d => ({
+          matricula: d.matricula,
+          nome: d.nomeDocente,
+          campus: d.campus,
+          tipo: d.tipoPendencia,
+        })),
+      };
+      const filename = new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+      fs.writeFileSync(path.join(this.historicoDir, filename), JSON.stringify(snapshot, null, 2), 'utf8');
+    } catch {}
   }
 
-  getLogs(): LogEntry[] {
-    return this.logs;
-  }
+  getStatus(): StatusProcessamento { return this.status; }
+  getLogs(): LogEntry[] { return this.logs; }
 
   addLog(tipo: LogEntry['tipo'], mensagem: string, detalhes?: string): void {
     this.logs.unshift({ id: uuidv4(), timestamp: new Date().toISOString(), tipo, mensagem, detalhes });

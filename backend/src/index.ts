@@ -14,6 +14,9 @@ import { ObterDashboardUseCase }     from './application/use-cases/ObterDashboar
 import { dashboardRoutes }           from './routes/dashboard';
 import { docentesRoutes }            from './routes/docentes';
 import { relatoriosRoutes }          from './routes/relatorios';
+import { configRoutes }              from './routes/config';
+import { historicoRoutes }           from './routes/historico';
+import { emailRoutes }               from './routes/email';
 import { errorHandler }              from './middleware/errorHandler';
 
 dotenv.config();
@@ -23,8 +26,9 @@ const PORT           = parseInt(process.env.PORT || '3001');
 const DATA_DIR       = path.resolve(__dirname, '..', '..', 'data');
 const ASSETS_DIR     = path.resolve(__dirname, '..', '..', 'assets');
 const RELATORIOS_DIR = path.join(DATA_DIR, 'relatorios');
+const HISTORICO_DIR  = path.join(DATA_DIR, 'historico');
 
-[DATA_DIR, RELATORIOS_DIR, path.join(DATA_DIR, 'logs'), path.join(DATA_DIR, 'cache')].forEach(dir => {
+[DATA_DIR, RELATORIOS_DIR, path.join(DATA_DIR, 'logs'), path.join(DATA_DIR, 'cache'), HISTORICO_DIR].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -33,7 +37,7 @@ const pendenciaService  = new PendenciaService();
 const repositorio       = new InMemoryDocenteRepository();
 const leitor            = new ExcelPlanilhaReader(pendenciaService);
 const pdfGerador        = new PdfRelatorioGenerator(RELATORIOS_DIR, ASSETS_DIR);
-const processarPlanilha = new ProcessarPlanilhaUseCase(repositorio, leitor);
+const processarPlanilha = new ProcessarPlanilhaUseCase(repositorio, leitor, HISTORICO_DIR);
 const gerarRelatorio    = new GerarRelatorioUseCase(repositorio, pdfGerador);
 const obterDashboard    = new ObterDashboardUseCase(repositorio);
 
@@ -44,6 +48,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/api/dashboard',  dashboardRoutes(obterDashboard, processarPlanilha));
 app.use('/api/docentes',   docentesRoutes(repositorio));
 app.use('/api/relatorios', relatoriosRoutes(processarPlanilha, gerarRelatorio, repositorio, pdfGerador, DATA_DIR));
+app.use('/api/config',     configRoutes());
+app.use('/api/historico',  historicoRoutes(HISTORICO_DIR));
+app.use('/api/email',      emailRoutes(repositorio, RELATORIOS_DIR));
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), processado: repositorio.temDocentes() });

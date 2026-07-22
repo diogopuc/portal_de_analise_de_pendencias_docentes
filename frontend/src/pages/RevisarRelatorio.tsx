@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Search, ChevronLeft, ChevronRight, FileText, RefreshCw, Download, CheckCircle, XCircle } from 'lucide-react';
-import { docentesAPI, relatoriosAPI } from '../services/api';
+import { Search, ChevronLeft, ChevronRight, FileText, RefreshCw, Download, CheckCircle, XCircle, Mail, X } from 'lucide-react';
+import { docentesAPI, relatoriosAPI, emailAPI } from '../services/api';
 import { Card } from '../components/ui/Card';
 import { useToast } from '../components/ui/Toast';
 import { STATUS_TACH_CORES } from '../types';
@@ -35,10 +35,33 @@ export function RevisarRelatorio() {
     }
   }, [data, matriculaParam]);
 
+  const [modalEmail, setModalEmail] = useState(false);
+  const [emailDest, setEmailDest]   = useState('');
+  const [emailAssunto, setEmailAssunto] = useState('');
+  const [emailCorpo, setEmailCorpo]     = useState('');
+
+  const abrirModalEmail = (docente: NonNullable<typeof docenteAtual>) => {
+    setEmailDest('');
+    setEmailAssunto(`Relatório de Pendências — ${docente.nomeDocente}`);
+    setEmailCorpo(`Prezado(a),\n\nSegue em anexo o relatório de pendências de ${docente.nomeDocente} (matrícula ${docente.matricula}).\n\nAtenciosamente,\nGPCA — PUCPR`);
+    setModalEmail(true);
+  };
+
   const gerarPDFMut = useMutation({
     mutationFn: (matricula: number) => relatoriosAPI.gerarPDF(matricula),
     onSuccess: (res) => mostrar('sucesso', `PDF gerado: ${res.nomeArquivo}`),
     onError: () => mostrar('erro', 'Erro ao gerar PDF'),
+  });
+
+  const enviarEmailMut = useMutation({
+    mutationFn: () => emailAPI.enviar({
+      matricula: docenteAtual!.matricula,
+      email:     emailDest,
+      assunto:   emailAssunto,
+      corpo:     emailCorpo,
+    }),
+    onSuccess: (res) => { mostrar('sucesso', res.mensagem); setModalEmail(false); },
+    onError: (err: any) => mostrar('erro', err?.response?.data?.erro ?? 'Erro ao enviar e-mail.'),
   });
 
   const docentes = data?.docentes || [];
@@ -137,6 +160,13 @@ export function RevisarRelatorio() {
                       target="_blank" rel="noreferrer" className="btn-secondary btn-xs">
                       <Download size={13} />
                     </a>
+                    <button
+                      onClick={() => abrirModalEmail(docenteAtual)}
+                      className="btn-secondary btn-xs"
+                      title="Enviar PDF por e-mail"
+                    >
+                      <Mail size={13} />
+                    </button>
                   </div>
                 </div>
 
@@ -212,6 +242,85 @@ export function RevisarRelatorio() {
           )}
         </div>
       </div>
+
+      {/* Modal de envio de e-mail */}
+      {modalEmail && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }} onClick={() => setModalEmail(false)}>
+          <div style={{
+            background: '#fff', borderRadius: 12, padding: '28px 32px', width: 480, maxWidth: '95vw',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Mail size={16} color="#8A0538" /> Enviar Relatório por E-mail
+              </h3>
+              <button onClick={() => setModalEmail(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', padding: 4 }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Destinatário *
+                </label>
+                <input
+                  type="email"
+                  value={emailDest}
+                  onChange={e => setEmailDest(e.target.value)}
+                  placeholder="email@exemplo.com"
+                  className="form-control"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Assunto
+                </label>
+                <input
+                  type="text"
+                  value={emailAssunto}
+                  onChange={e => setEmailAssunto(e.target.value)}
+                  className="form-control"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Mensagem
+                </label>
+                <textarea
+                  value={emailCorpo}
+                  onChange={e => setEmailCorpo(e.target.value)}
+                  rows={5}
+                  className="form-control"
+                  style={{ width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
+              <button onClick={() => setModalEmail(false)} className="btn-secondary">Cancelar</button>
+              <button
+                onClick={() => enviarEmailMut.mutate()}
+                disabled={!emailDest || enviarEmailMut.isPending}
+                style={{
+                  background: '#8A0538', color: '#fff', border: 'none', borderRadius: 8,
+                  padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  opacity: !emailDest ? 0.5 : 1,
+                }}
+              >
+                <Mail size={14} />
+                {enviarEmailMut.isPending ? 'Enviando...' : 'Enviar PDF'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

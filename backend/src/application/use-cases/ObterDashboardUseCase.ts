@@ -1,10 +1,11 @@
 import { IDocenteRepository } from '../../domain/repositories/IDocenteRepository';
-import { SEMANAS_CONFIG, SEMANAS_ABONADAS } from '../../config/semanas.config';
+import { lerConfig } from '../../config/semanas.config';
 
 export class ObterDashboardUseCase {
   constructor(private readonly repositorio: IDocenteRepository) {}
 
   executar(arquivoProcessado: string, ultimaAtualizacao: string) {
+    const { semanas: SEMANAS_CONFIG, abonadas: SEMANAS_ABONADAS } = lerConfig();
     const docentes = this.repositorio.listarTodos();
 
     const porSemana = SEMANAS_CONFIG.map(config => {

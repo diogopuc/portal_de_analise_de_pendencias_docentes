@@ -8,6 +8,9 @@ import { RevisarRelatorio } from './pages/RevisarRelatorio';
 import { TodosRelatorios } from './pages/TodosRelatorios';
 import { Analise } from './pages/Analise';
 import { Coordenador } from './pages/Coordenador';
+import { Cursos } from './pages/Cursos';
+import { Configuracao } from './pages/Configuracao';
+import { Historico } from './pages/Historico';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +34,9 @@ export default function App() {
               <Route path="/todos-relatorios" element={<TodosRelatorios />} />
               <Route path="/analise" element={<Analise />} />
               <Route path="/coordenador" element={<Coordenador />} />
+              <Route path="/cursos" element={<Cursos />} />
+              <Route path="/configuracao" element={<Configuracao />} />
+              <Route path="/historico" element={<Historico />} />
             </Route>
           </Routes>
         </BrowserRouter>

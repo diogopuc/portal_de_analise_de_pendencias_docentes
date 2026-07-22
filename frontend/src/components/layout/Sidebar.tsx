@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, Eye, FolderOpen, BarChart2, ChevronRight, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, FileText, Eye, FolderOpen, BarChart2, ChevronRight, GraduationCap, BookOpen, Settings, History } from 'lucide-react';
 
 interface SidebarProps {
   aberta: boolean;
@@ -17,7 +17,15 @@ const navItems = [
   },
   {
     grupo: 'COORDENAÇÃO',
-    items: [{ to: '/coordenador', label: 'Visão do Coordenador', icon: GraduationCap }],
+    items: [
+      { to: '/coordenador', label: 'Visão do Coordenador', icon: GraduationCap },
+      { to: '/cursos', label: 'Visão por Curso', icon: BookOpen },
+      { to: '/historico', label: 'Histórico de Evolução', icon: History },
+    ],
+  },
+  {
+    grupo: 'CONFIGURAÇÕES',
+    items: [{ to: '/configuracao', label: 'Configuração de Mês', icon: Settings }],
   },
   { grupo: 'SAIBA MAIS', items: [{ to: '/analise', label: 'Análise', icon: BarChart2 }] },
 ];
