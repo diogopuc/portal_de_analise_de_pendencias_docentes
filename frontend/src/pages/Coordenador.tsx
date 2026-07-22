@@ -406,7 +406,7 @@ export function Coordenador() {
                   </td>
                   <td style={{ padding: '10px 16px' }}>
                     <button
-                      onClick={() => navigate('/revisar')}
+                      onClick={() => navigate(`/revisar?matricula=${r.matricula}`)}
                       title="Ver detalhes"
                       style={{
                         display: 'flex', alignItems: 'center', gap: 4,

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Search, ChevronLeft, ChevronRight, FileText, RefreshCw, Download, CheckCircle, XCircle } from 'lucide-react';
 import { docentesAPI, relatoriosAPI } from '../services/api';
@@ -9,8 +10,11 @@ import type { Docente } from '../types';
 
 export function RevisarRelatorio() {
   const { mostrar } = useToast();
+  const [searchParams] = useSearchParams();
+  const matriculaParam = searchParams.get('matricula') ?? '';
+
   const [busca, setBusca] = useState('');
-  const [buscaAtiva, setBuscaAtiva] = useState('');
+  const [buscaAtiva, setBuscaAtiva] = useState(matriculaParam);
   const [docenteAtual, setDocenteAtual] = useState<Docente | null>(null);
   const [indiceAtual, setIndiceAtual] = useState(0);
 
@@ -18,6 +22,18 @@ export function RevisarRelatorio() {
     queryKey: ['docentes-revisar', buscaAtiva],
     queryFn: () => docentesAPI.listar({ busca: buscaAtiva || undefined, limite: 50 }),
   });
+
+  // Auto-seleciona o docente quando a página é aberta via param de matrícula
+  useEffect(() => {
+    if (!matriculaParam) return;
+    const docentes = data?.docentes ?? [];
+    if (docentes.length === 0 || docenteAtual) return;
+    const idx = docentes.findIndex(d => String(d.matricula) === matriculaParam);
+    if (idx !== -1) {
+      setDocenteAtual(docentes[idx]);
+      setIndiceAtual(idx);
+    }
+  }, [data, matriculaParam]);
 
   const gerarPDFMut = useMutation({
     mutationFn: (matricula: number) => relatoriosAPI.gerarPDF(matricula),
