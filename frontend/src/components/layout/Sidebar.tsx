@@ -64,7 +64,7 @@ export function Sidebar({ aberta }: SidebarProps) {
 
       {aberta && (
         <div className="sidebar-footer">
-          <p className="sidebar-footer-text">Grupo Marista · GPCA</p>
+          <p className="sidebar-footer-text">PUCPR · GPCA</p>
         </div>
       )}
     </aside>
